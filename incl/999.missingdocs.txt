@@ -1,0 +1,87 @@
+ as.character.MultiSourceCopyNumberNormalization
+  extractTupleOfDataFiles fitOne getAllNames
+  getAsteriskTags.TotalCnSmoothing getFitAromaUgpFile getInputDataSets
+  getOutputDataSets
+  getOutputDataSets.MultiSourceCopyNumberNormalization
+  getOutputFiles.TotalCnSmoothing getOutputPaths
+  getOutputPaths.MultiSourceCopyNumberNormalization
+  getParameters.MultiSourceCopyNumberNormalization
+  getParameters.TotalCnSmoothing
+  getParametersAsString.MultiSourceCopyNumberNormalization
+  getPath.TotalCnSmoothing getRootPath.TotalCnSmoothing
+  getSmoothedDataSets getSubsetToFit getTargetPositions
+  getTargetPositions.TotalCnSmoothing getTargetUgpFile
+  getTargetUgpFile.TotalCnSmoothing makeSmoothSplinePredict
+  makeSmoothSplinePredict.numeric nbrOfDataSets
+  nbrOfDataSets.MultiSourceCopyNumberNormalization normalizeOne
+  normalizeOne.MultiSourceCopyNumberNormalization
+  normalizePrincipalCurve normalizePrincipalCurve.matrix pairs2
+  pairs2.principal.curve process.TotalCnSmoothing
+  getAsteriskTags.TotalCnKernelSmoothing
+  getParameters.TotalCnKernelSmoothing smoothRawCopyNumbers
+  smoothRawCopyNumbers.TotalCnKernelSmoothing
+  smoothRawCopyNumbers.TotalCnSmoothing
+  asCartesianSnpData asCartesianSnpData.CartesianSnpData
+  asCartesianSnpData.PolarSnpData asCartesianSnpData.TotalFracBSnpData
+  asPolarSnpData asPolarSnpData.CartesianSnpData
+  asPolarSnpData.PolarSnpData asPolarSnpData.TotalFracBSnpData
+  asTotalFracBSnpData asTotalFracBSnpData.CartesianSnpData
+  asTotalFracBSnpData.PolarSnpData
+  asTotalFracBSnpData.TotalFracBSnpData callGenotypes
+  callGenotypes.SnpData callGenotypes.TotalFracBSnpData
+  CartesianSnpData 
+  pairedBoost pairedBoost.CartesianSnpData pairedBoost.PolarSnpData
+  pairedBoost.TotalFracBSnpData plot.CartesianSnpData plot.PolarSnpData
+  plot.SnpData plot.TotalFracBSnpData PolarSnpData SnpData
+  TotalFracBSnpData
+ as.character.TumorBoostNormalization getDataSets
+ getDataSets.TumorBoostNormalization
+ getInputDataSet.TumorBoostNormalization getNormalDataSet
+ getNormalDataSet.TumorBoostNormalization getNormalGenotypeCallSet
+ getNormalGenotypeCallSet.TumorBoostNormalization
+ getOutputDataSet.TumorBoostNormalization getOutputPath
+ getOutputPath.TumorBoostNormalization
+ getRootPath.TumorBoostNormalization
+ nbrOfFiles.TumorBoostNormalization process.TumorBoostNormalization
+ getAsteriskTags.TumorBoostNormalization
+ getFullName.TumorBoostNormalization getName.TumorBoostNormalization
+ getPath.TumorBoostNormalization getTags.TumorBoostNormalization
+ setTags.TumorBoostNormalization
+ getAsteriskTags.MultiSourceCopyNumberNormalization
+ getTags.MultiSourceCopyNumberNormalization
+clearCache.MultiSourceCopyNumberNormalization
+  getFlavor getFlavor.TumorBoostNormalization
+  as.character.AbstractCurveNormalization backtransformOne
+  backtransformOne.AbstractCurveNormalization
+  backtransformOne.PrincipalCurveNormalization
+  backtransformOne.XYCurveNormalization
+  fitOne.AbstractCurveNormalization fitOne.PrincipalCurveNormalization
+  fitOne.XYCurveNormalization
+  getAsteriskTags.AbstractCurveNormalization
+  getDataSets.AbstractCurveNormalization
+  getFullName.AbstractCurveNormalization
+  getInputDataSet.AbstractCurveNormalization
+  getName.AbstractCurveNormalization
+  getOutputDataSet.AbstractCurveNormalization
+  getPairedDataSet.AbstractCurveNormalization
+  getPath.AbstractCurveNormalization
+  getRootPath.AbstractCurveNormalization
+  getSubsetToFit.AbstractCurveNormalization
+  getTags.AbstractCurveNormalization
+  getTargetDataSet.AbstractCurveNormalization
+  nbrOfFiles.AbstractCurveNormalization
+  process.AbstractCurveNormalization setTags.AbstractCurveNormalization
+  getSubsetToFit.PrincipalCurveNormalization
+getPairedDataSet getTargetDataSet
+  callGenotypes callGenotypes.RawAlleleBFractions getCalls
+  getCalls.RawGenotypeCalls getColors getColors.RawGenotypeCalls
+  isHeterozygous.RawGenotypeCalls isHomozygous.RawGenotypeCalls
+  RawGenotypeCalls 
+ normalizeTumorBoost.RawAlleleBFractions
+  plotSmoothedPairsOne
+  plotSmoothedPairsOne.MultiSourceCopyNumberNormalization
+  getBacktransforms getBacktransforms.PrincipalCurve
+  getPrincipalCurveEstimator
+  getPrincipalCurveEstimator.MultiSourceCopyNumberNormalization
+  plotBacktransforms plotBacktransforms.PrincipalCurve
+

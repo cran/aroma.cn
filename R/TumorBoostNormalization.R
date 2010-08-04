@@ -26,6 +26,10 @@
 #     genotypes for the normals.}
 #  \item{flavor}{A @character string specifying the type of 
 #     correction applied.}
+#  \item{preserveScale}{If @TRUE, SNPs that are heterozygous in the
+#    matched normal are corrected for signal compression using an estimate
+#    of signal compression based on the amount of correction performed
+#    by TumorBoost on SNPs that are homozygous in the matched normal.}
 #  \item{collapseHomozygous}{If @TRUE, SNPs that are homozygous in the 
 #    matched normal are also called homozygous in the tumor, that is,
 #    it's allele B fraction is collapsed to either 0 or 1.  
@@ -42,7 +46,7 @@
 #
 # \author{Henrik Bengtsson and Pierre Neuvial}
 #*/########################################################################### 
-setConstructorS3("TumorBoostNormalization", function(dsT=NULL, dsN=NULL, gcN=NULL, flavor=c("v4", "v3", "v2", "v1"), collapseHomozygous=FALSE, tags="*", ...) {
+setConstructorS3("TumorBoostNormalization", function(dsT=NULL, dsN=NULL, gcN=NULL, flavor=c("v4", "v3", "v2", "v1"), preserveScale=TRUE, collapseHomozygous=FALSE, tags="*", ...) {
   # Validate arguments
   if (!is.null(dsT)) {
     # Argument 'flavor':
@@ -86,6 +90,8 @@ setConstructorS3("TumorBoostNormalization", function(dsT=NULL, dsN=NULL, gcN=NUL
     } # for (jj ...)
   } # if (!is.null(dsT))
 
+  preserveScale <- Arguments$getLogical(preserveScale);
+
   collapseHomozygous <- Arguments$getLogical(collapseHomozygous);
   if (collapseHomozygous) {
     throw("collapseHomozygous=FALSE is currently not implemented.");
@@ -102,7 +108,8 @@ setConstructorS3("TumorBoostNormalization", function(dsT=NULL, dsN=NULL, gcN=NUL
     .dsT = dsT,
     .dsN = dsN,
     .gcN = gcN,
-    .flavor = flavor
+    .flavor = flavor,
+    .preserveScale = preserveScale
   );
 
   setTags(this, tags);
@@ -118,8 +125,6 @@ setMethodS3("as.character", "TumorBoostNormalization", function(x, ...) {
   s <- sprintf("%s:", class(this)[1]);
 
   s <- c(s, sprintf("Flavor: %s", getFlavor(this)));
-
-  dsList <- getDataSets(this);
 
   dsList <- getDataSets(this);
   s <- c(s, sprintf("Data sets (%d):", length(dsList)));
@@ -142,10 +147,15 @@ setMethodS3("getAsteriskTags", "TumorBoostNormalization", function(this, collaps
     tags <- c(tags, flavor);
   }
 
+  preserveScale <- this$.preserveScale;
+  if (!preserveScale) {
+    tags <- c(tags, "ns");
+  }
+  
   if (!is.null(collapse)) {
     tags <- paste(tags, collapse=collapse);
   }
-  
+
   tags;
 }, private=TRUE)
 
@@ -350,6 +360,7 @@ setMethodS3("process", "TumorBoostNormalization", function(this, ..., force=FALS
     verbose && enter(verbose, "Normalizing tumor allele B fractions");
     verbose && cat(verbose, "Flavor: ", flavor);
     verbose && enter(verbose, "Estimating SNP effects");
+    # NOTE: It is possible that 'delta' has NA:s.
     delta <- (betaN - muN);
     verbose && str(verbose, delta);
     verbose && exit(verbose);
@@ -361,8 +372,10 @@ setMethodS3("process", "TumorBoostNormalization", function(this, ..., force=FALS
       b <- rep(1, length(delta));
       isDown <- (betaT < betaN);
       idxs <- whichVector(isDown);
+      # NOTE: It is possible that 'b' has NA:s.
       b[idxs] <- betaT[idxs]/betaN[idxs];
       idxs <- whichVector(!isDown);
+      # NOTE: It is possible that 'b' has NA:s.
       b[idxs] <- (1-betaT[idxs])/(1-betaN[idxs]);
       rm(isDown,isHomA,isHomB,idxs);
     } else if (flavor == "v3") {
@@ -372,8 +385,10 @@ setMethodS3("process", "TumorBoostNormalization", function(this, ..., force=FALS
       isHet <- !isHomA & !isHomB;
       isDown <- (betaT < betaN);
       idxs <- whichVector((isHet & isDown) | isHomA);
+      # NOTE: It is possible that 'b' has NA:s.
       b[idxs] <- betaT[idxs]/betaN[idxs];
       idxs <- whichVector((isHet & !isDown) | isHomB);
+      # NOTE: It is possible that 'b' has NA:s.
       b[idxs] <- (1-betaT[idxs])/(1-betaN[idxs]);
       rm(isDown,isHet,isHomA,isHomB,idxs);
     } else if (flavor == "v4") {
@@ -381,8 +396,10 @@ setMethodS3("process", "TumorBoostNormalization", function(this, ..., force=FALS
       isHet <- (muN != 0 & muN != 1);
       isDown <- (betaT < betaN);
       idxs <- whichVector(isHet & isDown);
+      # NOTE: It is possible that 'b' has NA:s.
       b[idxs] <- betaT[idxs]/betaN[idxs];
       idxs <- whichVector(isHet & !isDown);
+      # NOTE: It is possible that 'b' has NA:s.
       b[idxs] <- (1-betaT[idxs])/(1-betaN[idxs]);
       rm(isDown,isHet,idxs);
     }
@@ -392,8 +409,36 @@ setMethodS3("process", "TumorBoostNormalization", function(this, ..., force=FALS
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Normalizing");
-    betaTC <- betaT - b*delta;
-    verbose && str(verbose, betaTC);
+    # NOTE: It is possible that we introduce NA:s via 'b' and 'delta'.
+    betaTN <- betaT - b*delta;
+
+    preserveScale <- this$.preserveScale;
+    if (preserveScale) {
+      verbose && enter(verbose, "Correcting for signal compression");
+
+      isHom <- (muN == 0 | muN == 1);
+      idxs <- whichVector(isHom);
+      eta <- median(abs(betaT[idxs]-1/2), na.rm=TRUE);
+      verbose && cat(verbose, "Signal compression in homozygous SNPs before TBN");
+      verbose && str(verbose, 1/2-eta);
+      etaC <- median(abs(betaTN[idxs]-1/2), na.rm=TRUE);
+      verbose && cat(verbose, "Signal compression in homozygous SNPs after TBN");
+      verbose && str(verbose, 1/2-etaC);
+
+      # Correction factor
+      sf <- etaC/eta;
+      
+      isHet <- !isHom;
+      isDown <- (betaTN < 1/2);
+      idxs <- whichVector(isHet & isDown);
+      betaTN[idxs] <- 1/2 - sf * (1/2 - betaTN[idxs]);
+      idxs <- whichVector(isHet & !isDown);
+      betaTN[idxs] <- 1/2 + sf * (betaTN[idxs] - 1/2);
+
+      rm(isDown, isHom, isHet, idxs, eta, etaC, sf);
+      verbose && exit(verbose);
+    }
+    verbose && str(verbose, betaTN);
     verbose && exit(verbose);
     verbose && exit(verbose);
 
@@ -419,7 +464,7 @@ setMethodS3("process", "TumorBoostNormalization", function(this, ..., force=FALS
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Writing to temporary file");
-    dfTC[unitsT,1] <- betaTC;
+    dfTC[unitsT,1] <- betaTN;
     verbose && exit(verbose);
 
     # Renaming
@@ -448,6 +493,13 @@ setMethodS3("process", "TumorBoostNormalization", function(this, ..., force=FALS
 
 ############################################################################
 # HISTORY:
+# 2010-08-04 [PN]
+# o ROBUSTNESS: Added 'na.rm=TRUE' to 'median'.
+# o CLEAN UP: Removed an unnecessary 'rm'.
+# o Added option 'preserveScale' to correct for signal compression in
+#   heterozygous SNPs.  Defaults to 'TRUE'.
+# 2010-06-20
+# o CLEAN UP: Removed a duplicated line of code.
 # 2009-12-09
 # o Made flavor="v4" of TumorBoostNormalization the default, and if used
 #   then no "flavor" tag is added.

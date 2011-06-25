@@ -84,4 +84,45 @@ getPairedDataSet getTargetDataSet
   getPrincipalCurveEstimator
   getPrincipalCurveEstimator.MultiSourceCopyNumberNormalization
   plotBacktransforms plotBacktransforms.PrincipalCurve
+  getDataSet getDataSet.NaiveFracBGenotyping getGenotypeCallSet
+  getGenotypeCallSet.NaiveFracBGenotyping NaiveFracBGenotyping
+  nbrOfLoci.NaiveFracBGenotyping nbrOfSNPs
+  nbrOfSNPs.NaiveFracBGenotyping process.NaiveFracBGenotyping
+  processOne processOne.NaiveFracBGenotyping segmentByPruneCBS
+  segmentByPruneCBS.RawGenomicSignals
+normalizeBAFsByRegions
+  callAllelicBalanceByBAFs
+  callCopyNeutralRegions 
+  getXScale.CopyNumberRegions getYScale.CopyNumberRegions
+  plot.CopyNumberRegions segmentByPruneCBSv1
+  segmentByPruneCBSv1.RawGenomicSignals
+orthogonalizeC1C2
+  ABtoC1C2 bootstrap bootstrap.PairedPSCBS C1C2toAB deShearC1C2
+  extractC1C2 extractC1C2.list fitLoess2D
+  fitLoess2D.C1C2 fitLoessKD fitLoessKD.data.frame fitLoessKD.matrix
+  normalizeLoess2D normalizeLoess2D.C1C2 normalizeLoessKD
+  normalizeLoessKD.data.frame normalizeLoessKD.matrix plot.C1C2
+  points.C1C2 resampleA resampleA.PairedPSCBS resampleB
+  resampleB.PairedPSCBS resampleC resampleC.PairedPSCBS
+  callPeaks callPeaks.PeaksAndValleys callPeaks.data.frame
+  deShearC1C2_v0 deShearC1C2_v0.PairedPSCBS extractDeltaC1C2
+  extractDeltaC1C2.PairedPSCBS extractPolarDeltaC1C2
+  extractPolarDeltaC1C2.PairedPSCBS fitC1C2ShearModel
+  fitC1C2ShearModel.PairedPSCBS
+ fitDeltaC1C2ShearModel fitDeltaC1C2ShearModel.PairedPSCBS
+ fitDeltaXYShearModel fitDeltaXYShearModel.matrix
+  calibrateC1C2 estimateC2Bias estimateC2Bias.PairedPSCBS
+  fitC1C2Densities fitC1C2Densities.PairedPSCBS fitC1C2Peaks
+  fitC1C2Peaks.PairedPSCBS plotC1C2Grid plotC1C2Grid.PairedPSCBS
+  translateC1C2 translateC1C2.PairedPSCBS
+extractDhSegment extractDhSegment.PairedPSCBS
+transformC1C2 transformC1C2.PairedPSCBS
+ PairedPSCBSFile PairedPSCBSFileSet byName.PairedPSCBSFileSet
+ byPath.PairedPSCBSFileSet
+ findAtomicAberrations.PairedPSCBS findByName.PairedPSCBSFileSet
+ loadObject.PairedPSCBSFile
+ plotTracks plotTracks.PruneCNA
+ pruneCNA pruneCNA.PairedPSCBS
+ testEqualityC1C2ByChiSquare testEqualityC1C2ByMean
+ testEqualityTcnByMean testEqualityTcnByT 
 

@@ -1,6 +1,45 @@
 Package: aroma.cn
 =================
 
+Version: 0.7.3 [2011-06-25]
+o ROBUSTNESS: Updated package dependencies.
+o FIXES: Now package refers to PSCBS package (not old psCBS).
+
+
+Version: 0.7.2 [2011-04-03]
+o CLEANUP: Utilizing hpaste() internally wherever applicable.
+
+
+Version: 0.7.1 [2011-03-03]
+o Fixed a small code typo that didn't make a difference.
+
+
+Version: 0.7.0 [2011-01-19]
+o Added beta classes PairedPSCBSFile and PairedPSCBSFileSet.
+o Removed a NOTE from R CMD check.
+
+
+Version: 0.6.4 [2010-11-04]
+o ROBUSTNESS: Now all bootstrap methods utilize resample().
+o Added more internal utility functions for future usage.
+
+
+Version: 0.6.3 [2010-10-08]
+o Added more internal utility functions for future usage.
+
+
+Version: 0.6.2 [2010-09-24]
+o Added more internal utility functions for future usage.
+
+
+Version: 0.6.1 [2010-09-19]
+o Added more internal utility functions for future usage.
+
+
+Version: 0.6.0 [2010-09-15]
+o Added internal utility functions for future usage.
+
+
 Version: 0.5.2 [2010-08-04]
 o Added option 'preserveScale' to TumorBoostNormalization for
   correcting for signal compression in heterozygous SNPs.

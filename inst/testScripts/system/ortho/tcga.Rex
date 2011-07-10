@@ -1,5 +1,5 @@
 library("aroma.cn");
-library("psCBS");
+library("PSCBS");
 
 verbose <- Arguments$getVerbose(-8, timestamp=TRUE);
 

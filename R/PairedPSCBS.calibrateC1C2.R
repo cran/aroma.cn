@@ -55,7 +55,7 @@ setMethodS3("calibrateC1C2", "PairedPSCBS", function(fit, ..., force=FALSE, cach
   # Check for cached results
   key <- list(method="postsegmentTCN", class=class(fit)[1], 
     data=as.data.frame(fit),
-    version="2010-10-10"
+    version="2011-11-02"
   );
   dirs <- c("aroma.cn", "ortho");
   if (!force) {
@@ -96,7 +96,8 @@ setMethodS3("calibrateC1C2", "PairedPSCBS", function(fit, ..., force=FALSE, cach
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Adjusting for biases in allelic-balance segments");
   fit4 <- callAllelicBalanceByBAFs(fit3, verbose=verbose);
-  ww <- which(fit4$output$abCall);
+  segs4 <- getSegments(fit4, splitters=TRUE);
+  ww <- which(segs4$abCall);
   fit4$output[ww, "dhMean"] <- 0;
   verbose && exit(verbose);
 
@@ -189,7 +190,8 @@ setMethodS3("calibrateC1C2", "PairedPSCBS", function(fit, ..., force=FALSE, cach
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Adjusting for biases in allelic-balance segments");
   fit10 <- callAllelicBalanceByBAFs(fit9, force=TRUE, verbose=verbose);
-  ww <- which(fit10$output$abCall);
+  segs10 <- getSegments(fit10, splitters=TRUE);
+  ww <- which(segs10$abCall);
   fit10$output[ww, "dhMean"] <- 0;
   verbose && exit(verbose);
 
@@ -276,6 +278,18 @@ setMethodS3("calibrateC1C2", "PairedPSCBS", function(fit, ..., force=FALSE, cach
   if (debug) {
     ff <- fit12;
     figName <- "debug,fit12";
+    devSet(figName); devSet(figName);
+    plotC1C2Grid(ff); linesC1C2(ff); stext(side=3,pos=1,figName);
+  }
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Deshear by (C1,C2) - diagonals
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  fit13 <- deShearC1C2(fit12, dirs="X", verbose=verbose);
+  if (debug) {
+    ff <- fit13;
+    figName <- "debug,fit13";
     devSet(figName); devSet(figName);
     plotC1C2Grid(ff); linesC1C2(ff); stext(side=3,pos=1,figName);
   }
@@ -388,6 +402,8 @@ setMethodS3("fitC1C2Densities", "PairedPSCBS", function(fit, adjust=0.2, tol=0.0
 
 ##############################################################################
 # HISTORY
+# 2011-10-16 [HB]
+# o Now using getSegments(fit) instead of fit$output.
 # 2011-07-10 [HB]
 # o Updated code to work with the new column names in PSCBS v0.11.0.
 # 2010-10-10 [HB]

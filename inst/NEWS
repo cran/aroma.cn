@@ -1,6 +1,28 @@
 Package: aroma.cn
 =================
 
+Version: 0.9.2 [2011-11-02]
+o Updated the memoiziation keys for some of the PairedPSCBS
+  methods so that results prior to PSCBS v0.13.3 will not
+  be retrieved.
+
+
+Version: 0.9.1 [2011-10-31]
+o Added Rdoc comments to callPeaks() for PeaksAndValleys.
+
+
+Version: 0.9.0 [2011-10-28]
+o Added a namespace to the package, which will be more or less
+  a requirement starting with R v2.14.0.
+
+
+Version: 0.8.3 [2011-10-16]
+o Now deShearC1C2(), translateC1C2() and transformC1C2() also 
+  update C1 and C2 mean levels. 
+o Now using getLocusData() and getSegments() internally for all
+  PairedPSCBS objects whereever applicable.
+
+
 Version: 0.8.2 [2011-08-07]
 o The aroma.cn v0.8.1 tar ball uploaded to CRAN mistakenly
   contained a NAMESPACE file, which shouldn't have been there.

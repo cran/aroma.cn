@@ -1,6 +1,5 @@
 library("aroma.cn");
 library("PSCBS");
-library("R.rsp.addons");
 #sourceTo("../aroma.cn/R/PairedPSCBS.NORM.R", modifiedOnly=TRUE);
 
 

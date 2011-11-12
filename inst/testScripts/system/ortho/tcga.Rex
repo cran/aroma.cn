@@ -100,7 +100,7 @@ for (ii in seq(along=sampleNames)) {
   linesC1C2(fit);
   stext(side=3, pos=0, sampleName);
   title(main="(C1,C2) - raw");
-  devOff();
+  devDone();
 } # for (ii ...)
 
 stop()

@@ -20,7 +20,7 @@
  Calls regions that are in allelic balance from the allele B fractions (BAF).
 }
 
-\usage{\method{callAllelicBalanceByBAFs}{PairedPSCBS}(fit, maxScore="auto", ..., force=FALSE, cache=TRUE, verbose=FALSE)}
+\usage{\method{callAllelicBalanceByBAFs}{PairedPSCBS}(fit, maxScore="auto", ..., force=FALSE, cache=FALSE, verbose=FALSE)}
 
 \arguments{
   \item{fit}{A PairedPSCBS fit object as returned by
@@ -39,16 +39,15 @@
 }
 
 \examples{
-if (require("PSCBS")) {
+
+if (require("PSCBS") && Sys.getenv("_R_CHECK_FULL_") != "") {
 
 # Load example ASCN data
 pathname <- system.file("data-ex/PairedPSCBS,exData,chr01.Rbin", package="PSCBS");
 data <- R.utils::loadObject(pathname);
-R.oo::attachLocally(data);
-x <- position;
 
 # PSCBS segmentation
-fit <- segmentByPairedPSCBS(CT, betaT=betaT, betaN=betaN, x=x, verbose=-10);
+fit <- segmentByPairedPSCBS(data, verbose=-10);
 
 # Normalize
 fitN <- normalizeBAFsByRegions(fit, verbose=-10);

@@ -47,13 +47,13 @@
 }
 
 \examples{
-if (require("PSCBS")) {
+
+if (require("PSCBS") && Sys.getenv("_R_CHECK_FULL_") != "") {
 
 # Load example ASCN data
 pathname <- system.file("data-ex/PairedPSCBS,exData,chr01.Rbin", package="PSCBS");
 data <- R.utils::loadObject(pathname);
 R.oo::attachLocally(data);
-x <- position;
 
 # AD HOC: Robustification
 CT[CT < 0] <- 0;

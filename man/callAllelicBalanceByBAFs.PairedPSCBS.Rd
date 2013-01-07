@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  PairedPSCBS.EXTS2.R
+%  PairedPSCBS.CALL2.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -23,7 +23,7 @@
 \usage{\method{callAllelicBalanceByBAFs}{PairedPSCBS}(fit, maxScore="auto", ..., force=FALSE, cache=FALSE, verbose=FALSE)}
 
 \arguments{
-  \item{fit}{A PairedPSCBS fit object as returned by
+  \item{fit}{A \code{\link[PSCBS]{PairedPSCBS}} fit object as returned by
     \code{\link[PSCBS]{segmentByPairedPSCBS}}.}
   \item{maxScore}{A positive \code{\link[base]{double}} threshold.
     If \code{"auto"}, the threshold is estimated empirically.}
@@ -33,9 +33,9 @@
 }
 
 \value{
-  Returns a PairedPSCBS fit object where columns for
-  allelic imbalance scores and p-values as well as allelic
-  balance calls are added.
+  Returns a \code{\link[PSCBS]{PairedPSCBS}} fit object
+  where columns for allelic imbalance scores and
+  p-values as well as allelic balance calls are added.
 }
 
 \examples{
@@ -59,6 +59,13 @@ print(fitN2);
 }
 
 \author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+
+\seealso{
+  Internally, \code{\link{testAllelicBalanceByBAFs}}() is used.
+
+  Note that this AB caller differs from the default one in the
+  \pkg{PSCBS} package, cf. \code{\link[PSCBS]{callAB.PairedPSCBS}}.
+}
 
 
 \keyword{internal}

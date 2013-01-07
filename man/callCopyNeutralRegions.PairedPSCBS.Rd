@@ -1,7 +1,7 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Do not modify this file since it was automatically generated from:
 % 
-%  PairedPSCBS.EXTS2.R
+%  PairedPSCBS.CALL2.R
 % 
 % by the Rdoc compiler part of the R.oo package.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -19,19 +19,19 @@
  Calls regions that are copy neutral from the allele B fractions (BAF).
 }
 
-\usage{\method{callCopyNeutralRegions}{PairedPSCBS}(fit, ..., force=FALSE, verbose=FALSE)}
+\usage{\method{callCopyNeutralRegions}{PairedPSCBS}(fit, ...)}
 
 \arguments{
-  \item{fit}{A PairedPSCBS fit object as returned by
+  \item{fit}{A \code{\link[PSCBS]{PairedPSCBS}} fit object as returned by
     \code{\link[PSCBS]{segmentByPairedPSCBS}}.}
   \item{...}{Additional arguments passed to
-    \code{\link[aroma.cn]{findNeutralCopyNumberState}}.}
-  \item{force}{If \code{\link[base:logical]{TRUE}}, an already called object is skipped, otherwise not.}
-  \item{verbose}{See \code{\link[R.utils]{Verbose}}.}
+    \code{\link[aroma.cn]{findNeutralCopyNumberState}} and
+    \code{\link[PSCBS]{callCopyNeutral.PairedPSCBS}}.}
 }
 
 \value{
-  Returns a PairedPSCBS fit object where a column with the copy-neutral call.
+  Returns a \code{\link[PSCBS]{PairedPSCBS}} fit object
+  where a column with the copy-neutral call.
 }
 
 \examples{
@@ -45,11 +45,13 @@ data <- R.utils::loadObject(pathname);
 # PSCBS segmentation
 fit <- segmentByPairedPSCBS(data, verbose=-10);
 
-# Normalize
-fitN <- normalizeBAFsByRegions(fit, verbose=-10);
+fit <- bootstrapTCNandDHByRegion(fit, verbose=-10);
 
-fitN2 <- callCopyNeutralRegions(fitN, verbose=-10);
-print(fitN2);
+fitC <- callCopyNeutralRegions(fit, verbose=-10);
+print(fitC);
+
+# Normalize
+fitN <- normalizeBAFsByRegions(fitC, verbose=-10);
 
 } # if (require("PSCBS"))
 }

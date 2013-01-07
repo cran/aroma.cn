@@ -15,7 +15,7 @@
   makeSmoothSplinePredict.numeric nbrOfDataSets
   nbrOfDataSets.MultiSourceCopyNumberNormalization normalizeOne
   normalizeOne.MultiSourceCopyNumberNormalization
-  normalizePrincipalCurve normalizePrincipalCurve.matrix pairs2
+  normalizePrincipalCurve pairs2
   pairs2.principal.curve process.TotalCnSmoothing
   getAsteriskTags.TotalCnKernelSmoothing
   getParameters.TotalCnKernelSmoothing smoothRawCopyNumbers
@@ -49,7 +49,6 @@
  setTags.TumorBoostNormalization
  getAsteriskTags.MultiSourceCopyNumberNormalization
  getTags.MultiSourceCopyNumberNormalization
-clearCache.MultiSourceCopyNumberNormalization
   getFlavor getFlavor.TumorBoostNormalization
   as.character.AbstractCurveNormalization backtransformOne
   backtransformOne.AbstractCurveNormalization
@@ -115,7 +114,6 @@ orthogonalizeC1C2
   fitC1C2Densities fitC1C2Densities.PairedPSCBS fitC1C2Peaks
   fitC1C2Peaks.PairedPSCBS plotC1C2Grid plotC1C2Grid.PairedPSCBS
   translateC1C2 translateC1C2.PairedPSCBS
-extractDhSegment extractDhSegment.PairedPSCBS
 transformC1C2 transformC1C2.PairedPSCBS
  PairedPSCBSFile PairedPSCBSFileSet byName.PairedPSCBSFileSet
  byPath.PairedPSCBSFileSet
@@ -127,3 +125,44 @@ transformC1C2 transformC1C2.PairedPSCBS
  testEqualityTcnByMean testEqualityTcnByT 
 cat getOption
 drawC1C2Density drawC1C2Density.PairedPSCBS
+getAsteriskTags.TotalCnBinnedSmoothing
+getParameters.TotalCnBinnedSmoothing
+smoothRawCopyNumbers.TotalCnBinnedSmoothing
+findAtomicAberrations.CBS pruneCNA.AbstractCBS
+[.PruneCNA extractGenerations extractGenerations.PruneCNA
+findAtomicAberrations.CBS nbrOfGenerations
+nbrOfGenerations.PruneCNA pruneCNA.AbstractCBS
+testEqualityC1C2ByChiSq testEqualityC1orC2ByT
+as.character.PairedPscbsModel
+fit.PairedPscbsModel getAsteriskTags.PairedPscbsModel
+getChipType.PairedPscbsModel getChromosomes.PairedPscbsModel
+getDataSets.PairedPscbsModel getFitFunction.PairedPscbsModel
+getFullName.PairedPscbsModel getName.PairedPscbsModel
+getNormalDataSet.PairedPscbsModel
+getOptionalArguments.PairedPscbsModel
+getParameters.PairedPscbsModel
+getParametersAsString.PairedPscbsModel getPath.PairedPscbsModel
+getRandomSeed.PairedPscbsModel getRootPath.PairedPscbsModel
+getTags.PairedPscbsModel getTumorDataSet
+getTumorDataSet.PairedPscbsModel indexOf.PairedPscbsModel
+nbrOfFiles.PairedPscbsModel setRandomSeed.PairedPscbsModel
+setTags.PairedPscbsModel
+calculatePairedPSCNByGenotype
+calculatePairedPSCNByGenotype.data.frame
+calculatePairedPSCNByGenotype.numeric
+calculateTumorPSCNByGenotypeUsingCTCN
+calculateTumorPSCNByGenotypeUsingCTCN.numeric
+PairedPscbsCaller getAsteriskTags.PairedPscbsCaller
+getParameters.PairedPscbsCaller getPath.PairedPscbsCaller
+getPlatform.PairedPscbsCaller getRootPath.PairedPscbsCaller
+process.PairedPscbsCaller
+getOutputDataSet.PairedPscbsModel loadFit.PairedPSCBSFile
+getChipType.PairedPSCBSFileSet
+getDefaultFullName.PairedPSCBSFileSet
+getPlatform.PairedPSCBSFileSet
+getOptionalArguments.PairedPscbsCaller
+backgroundCorrect backgroundCorrect.PairedPSCBS
+getOutputDataSet0.TotalCnSmoothing getOutputFileClass
+getOutputFileClass.TotalCnSmoothing getOutputFileExtension
+getOutputFileExtension.TotalCnSmoothing getOutputFileSetClass
+getOutputFileSetClass.TotalCnSmoothing

@@ -1,4 +1,12 @@
-setMethodS3("pruneCNA", "PairedPSCBS", function(fit, ..., maxGeneration=Inf, onAtomicIsland=NULL, verbose=FALSE) {
+# \section{Required method implementations}{
+#  In order for this method to work, the following methods need to be
+#  implemented for the class of argument \code{fit}:
+#  \itemize{
+#   \item \code{findAtomicAberrations()}
+#   \item \code{mergeTwoSegments()}
+#  }
+# }
+setMethodS3("pruneCNA", "AbstractCBS", function(fit, ..., maxGeneration=Inf, onAtomicIsland=NULL, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -36,6 +44,7 @@ setMethodS3("pruneCNA", "PairedPSCBS", function(fit, ..., maxGeneration=Inf, onA
       verbose && enter(verbose, sprintf("Block size H=%d of %d", hh, maxH));
     
       res <- findAtomicAberrations(fitT, H=hh, ..., verbose=verbose);
+      verbose && str(verbose, res);
     
       # (i) Atomic islands?
       if (hh == 0) {
@@ -43,14 +52,33 @@ setMethodS3("pruneCNA", "PairedPSCBS", function(fit, ..., maxGeneration=Inf, onA
       } else {
         atomicIslands <- res$atomicIslands;
       }
+
       if (length(atomicIslands) > 0) {
         verbose && printf(verbose, "Atomic islands found (H=%d):\n", hh);
         verbose && print(verbose, atomicIslands);
+
+        # Overlapping atomic islands?
+        if (length(atomicIslands) > 1) {
+          regionsHH <- matrix(c(atomicIslands, atomicIslands+hh), ncol=2L, byrow=FALSE);
+          colnames(regionsHH) <- c("from", "to");
+          rownames(regionsHH) <- sprintf("Atomic island #%d", seq_along(atomicIslands));
+          verbose && print(verbose, regionsHH);
+
+          froms <- regionsHH[-1,"from"];
+          tos <- regionsHH[-length(atomicIslands),"to"];
+          isOverlapping <- (froms <= tos);
+          verbose && printf(verbose, "Overlapping: %s\n", any(isOverlapping));
+
+          if (any(isOverlapping)) {
+            verbose && cat(verbose, "Overlapping atomic islands. Dropping only the first.");
+            atomicIslands <- atomicIslands[1];
+          }
+        }
     
         # Drop atomic islands and merge flanking segments
         dropList <- list();
         atomicIslands <- sort(atomicIslands, decreasing=TRUE);
-        for (kk in seq(along=atomicIslands)) {
+        for (kk in seq_along(atomicIslands)) {
           atomicIsland <- atomicIslands[kk];
           if (hh == 0) {
             atomicIslandTag <- sprintf("change point #%d", atomicIsland);
@@ -91,7 +119,6 @@ setMethodS3("pruneCNA", "PairedPSCBS", function(fit, ..., maxGeneration=Inf, onA
           # Sanity check
           stopifnot(n0-n1 == hh+1);
 
-
           fitT <- fitTT;
 
           verbose && exit(verbose);
@@ -107,8 +134,8 @@ setMethodS3("pruneCNA", "PairedPSCBS", function(fit, ..., maxGeneration=Inf, onA
     
         # Go to next generation
         break;
-      }
-    
+      } # if (length(atomicIslands) > 0)
+
       verbose && exit(verbose);
     } # for (hh ...)
   
@@ -125,12 +152,14 @@ setMethodS3("pruneCNA", "PairedPSCBS", function(fit, ..., maxGeneration=Inf, onA
   class(fitList) <- c("PruneCNA", class(fitList));
 
   fitList;
-})
+}) # prunceCNA()
 
 
 
 ############################################################################
 # HISTORY:
+# 2012-06-05
+# o Now pruneCNA() is for AbstractCBS, not just PairedPSCBS objects.
 # 2011-01-18
 # o Added class 'PruneCNA' to the return object of pruneCNA().
 # o Now pruneCNA() returns pruned objects with the dropped segments 

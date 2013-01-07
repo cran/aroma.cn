@@ -28,10 +28,6 @@
 #  @allmethods "public"
 # }
 #
-# \section{See also}{
-#   @see "aroma.light::fitPrincipalCurve"
-# }
-#
 # \author{Henrik Bengtsson}
 #*/########################################################################### 
 setConstructorS3("AbstractCurveNormalization", function(dataSet=NULL, targetSet=NULL, subsetToFit=NULL, tags="*", copyTarget=TRUE, ...) {
@@ -40,7 +36,7 @@ setConstructorS3("AbstractCurveNormalization", function(dataSet=NULL, targetSet=
     # Arguments 'dataSet' and 'targetSet'
     dsList <- list(dataSet=dataSet, targetSet=targetSet);
     className <- "AromaUnitTotalCnBinarySet";
-    for (kk in seq(along=dsList)) {
+    for (kk in seq_along(dsList)) {
       key <- names(dsList)[kk];
       ds <- dsList[[kk]];
       ds <- Arguments$getInstanceOf(ds, className, .name=key);
@@ -50,12 +46,12 @@ setConstructorS3("AbstractCurveNormalization", function(dataSet=NULL, targetSet=
     for (jj in 1:(length(dsList)-1)) {
       keyJJ <- names(dsList)[jj];
       dsJJ <- dsList[[jj]];
-      nJJ <- nbrOfFiles(dsJJ);
+      nJJ <- length(dsJJ);
       chipTypeJJ <- getChipType(dsJJ);
       for (kk in (jj+1):length(dsList)) {
         keyKK <- names(dsList)[kk];
         dsKK <- dsList[[kk]];
-        nKK <- nbrOfFiles(dsKK);
+        nKK <- length(dsKK);
         chipTypeKK <- getChipType(dsKK);
 
         # Assert that each data set contains the same number of files
@@ -115,7 +111,7 @@ setMethodS3("as.character", "AbstractCurveNormalization", function(x, ...) {
 
   dsList <- getDataSets(this);
   s <- c(s, sprintf("Data sets (%d):", length(dsList)));
-  for (kk in seq(along=dsList)) {
+  for (kk in seq_along(dsList)) {
     ds <- dsList[[kk]];
     s <- c(s, sprintf("<%s>:", capitalize(names(dsList)[kk])));
     s <- c(s, as.character(ds));
@@ -123,7 +119,7 @@ setMethodS3("as.character", "AbstractCurveNormalization", function(x, ...) {
  
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getAsteriskTags", "AbstractCurveNormalization", function(this, ...) {
@@ -148,7 +144,7 @@ setMethodS3("getAsteriskTags", "AbstractCurveNormalization", function(this, ...)
   tags <- name;
 
   tags;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -263,7 +259,8 @@ setMethodS3("getTargetDataSet", "AbstractCurveNormalization", function(this, ...
 
 setMethodS3("getRootPath", "AbstractCurveNormalization", function(this, ...) {
   "totalAndFracBData";
-})
+}, protected=TRUE)
+
 
 setMethodS3("getPath", "AbstractCurveNormalization", function(this, create=TRUE, ...) {
   # Create the (sub-)directory tree for the data set
@@ -279,7 +276,14 @@ setMethodS3("getPath", "AbstractCurveNormalization", function(this, create=TRUE,
   chipType <- getChipType(ds, fullname=FALSE);
 
   # The full path
-  path <- filePath(rootPath, fullname, chipType, expandLinks="any");
+  path <- filePath(rootPath, fullname, chipType);
+
+  # Create path?
+  if (create) {
+    path <- Arguments$getWritablePath(path);
+  } else {
+    path <- Arguments$getReadablePath(path, mustExist=FALSE);
+  }
 
   # Verify that it is not the same as the input path
   inPath <- getPath(getInputDataSet(this));
@@ -287,23 +291,14 @@ setMethodS3("getPath", "AbstractCurveNormalization", function(this, create=TRUE,
     throw("The generated output data path equals the input data path: ", path, " == ", inPath);
   }
 
-  # Create path?
-  if (create) {
-    if (!isDirectory(path)) {
-      mkdirs(path);
-      if (!isDirectory(path))
-        throw("Failed to create output directory: ", path);
-    }
-  }
-
   path;
-})
+}, protected=TRUE)
 
 
 setMethodS3("nbrOfFiles", "AbstractCurveNormalization", function(this, ...) {
   ds <- getInputDataSet(this);
-  nbrOfFiles(ds);
-})
+  length(ds);
+}, protected=TRUE)
 
 
 setMethodS3("getOutputDataSet", "AbstractCurveNormalization", function(this, ..., verbose=FALSE) {
@@ -336,7 +331,7 @@ setMethodS3("getOutputDataSet", "AbstractCurveNormalization", function(this, ...
   if (anyMissing(idxs)) {
     throw("Should not happen.");
   }
-  verbose && cat(verbose, "Number of files dropped: ", nbrOfFiles(res) - length(idxs));
+  verbose && cat(verbose, "Number of files dropped: ", length(res) - length(idxs));
   verbose && cat(verbose, "Number of files kept: ", length(idxs));
   res <- extract(res, idxs);
   verbose && exit(verbose);
@@ -349,7 +344,7 @@ setMethodS3("getOutputDataSet", "AbstractCurveNormalization", function(this, ...
 
 setMethodS3("getPairedDataSet", "AbstractCurveNormalization", function(this, array, ..., verbose=FALSE) {
   ds <- getInputDataSet(this);
-  nbrOfArrays <-nbrOfFiles(ds);
+  nbrOfArrays <- length(ds);
 
   # Argument 'array':
   array <- Arguments$getIndex(array, max=nbrOfArrays);
@@ -418,7 +413,7 @@ setMethodS3("process", "AbstractCurveNormalization", function(this, ..., force=F
   }
 
 
-  for (kk in seq(length=nbrOfFiles)) {
+  for (kk in seq_len(nbrOfFiles)) {
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
     # Extract array pair
     # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -617,6 +612,8 @@ setMethodS3("process", "AbstractCurveNormalization", function(this, ..., force=F
 
 ############################################################################
 # HISTORY:
+# 2012-04-16
+# o DOCUMENTATION: Removed reference to aroma.light::fitPrincipalCurve().
 # 2010-01-05
 # o BUG FIX: getOutputDataSet() of AbstractCurveNormalization returned all
 #   files, not just the ones matching the input set.

@@ -49,17 +49,17 @@ setConstructorS3("TotalCnKernelSmoothing", function( ..., kernel=c("gaussian", "
 
 
 setMethodS3("getParameters", "TotalCnKernelSmoothing", function(this, ...) {
-  params <- NextMethod("getParameters", this, ...);
+  params <- NextMethod("getParameters");
   params$kernel <- this$.kernel;
   params$bandwidth <- this$.bandwidth;
   params$censorH <- this$.censorH;
   params$robust <- this$.robust;
   params;
-}, private=TRUE);
+}, protected=TRUE);
 
 
 setMethodS3("getAsteriskTags", "TotalCnKernelSmoothing", function(this, collapse=NULL, ...) {
-  tags <- NextMethod("getAsteriskTags", this, collapse=NULL, ...);
+  tags <- NextMethod("getAsteriskTags", collapse=NULL);
 
   # Add class-specific tags
 

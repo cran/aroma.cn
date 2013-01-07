@@ -92,12 +92,15 @@
 #*/###########################################################################
 setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fitUgp=NULL, subsetToFit=NULL, targetDimension=1, align=c("byChromosome", "none"), tags="*", ...) {
   if (!is.null(dsList)) {
+    # aroma.light::fitPrincipalCurve()
+    require("aroma.light") || throw("Package not loaded: aroma.light");
+
     # Arguments 'dsList':
     if (is.list(dsList)) {
       K <- length(dsList);
 
       className <- "AromaUnitTotalCnBinarySet";
-      for (kk in seq(length=K)) {
+      for (kk in seq_len(K)) {
         ds <- dsList[[kk]];
         ds <- Arguments$getInstanceOf(ds, className, .name="dsList");
       }
@@ -134,14 +137,14 @@ setConstructorS3("MultiSourceCopyNumberNormalization", function(dsList=NULL, fit
     throw("Unknown arguments: ", argsStr);
   }
 
-  extend(Object(), "MultiSourceCopyNumberNormalization",
+  extend(Object(), c("MultiSourceCopyNumberNormalization", uses("ParametersInterface")),
     .tags = tags,
     .dsList = dsList,
     .fitUgp = fitUgp,
     .subsetToFit = subsetToFit,
     .align = align,
     .targetDimension = targetDimension,
-    "cache:.dsSmoothList" = NULL
+    "cached:.dsSmoothList" = NULL
   )
 })
 
@@ -159,7 +162,7 @@ setMethodS3("as.character", "MultiSourceCopyNumberNormalization", function(x, ..
   # Data sets:
   dsList <- getInputDataSets(this);
   s <- c(s, sprintf("Data sets (%d):", length(dsList)));
-  for (kk in seq(along=dsList)) {
+  for (kk in seq_along(dsList)) {
     ds <- dsList[[kk]];
     s <- c(s, as.character(ds));
   }
@@ -171,26 +174,11 @@ setMethodS3("as.character", "MultiSourceCopyNumberNormalization", function(x, ..
   s <- c(s, sprintf("Names: %s [%d]", hpaste(names), n)); 
 
   # Parameters:
-  paramStr <- getParametersAsString(this);
-  paramStr <- paste(paramStr, collapse="; ");
-  s <- c(s, sprintf("Parameters: %s", paramStr)); 
+  s <- c(s, sprintf("Parameters: %s", getParametersAsString(this))); 
 
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
-
-
-setMethodS3("clearCache", "MultiSourceCopyNumberNormalization", function(this, ...) {
-  # Clear all cached values.
-  # /AD HOC.
-  for (ff in c(".dsSmoothList")) {
-    this[[ff]] <- NULL;
-  }
-
-  # Then for this object
-  NextMethod(generic="clearCache", object=this, ...);
-}, private=TRUE)
-
+}, protected=TRUE)
 
 
 ###########################################################################/**
@@ -281,7 +269,7 @@ setMethodS3("getOutputPaths", "MultiSourceCopyNumberNormalization", function(thi
   });
   paths <- unlist(paths, use.names=FALSE);
   paths;
-});
+}, protected=TRUE)
 
 
 setMethodS3("getOutputDataSets", "MultiSourceCopyNumberNormalization", function(this, ..., force=FALSE, verbose=FALSE) {
@@ -301,7 +289,7 @@ setMethodS3("getOutputDataSets", "MultiSourceCopyNumberNormalization", function(
   dsList <- getInputDataSets(this);
   paths <- getOutputPaths(this);
   dsOutList <- list();
-  for (kk in seq(along=dsList)) {
+  for (kk in seq_along(dsList)) {
     ds <- dsList[[kk]];
     verbose && enter(verbose, sprintf("Data set %d ('%s') of %d",
                                     kk, getFullName(ds), length(dsList)));
@@ -325,7 +313,7 @@ setMethodS3("getOutputDataSets", "MultiSourceCopyNumberNormalization", function(
       if (anyMissing(idxs)) {
         throw("Should not happen.");
       }
-      verbose && cat(verbose, "Number of files dropped: ", nbrOfFiles(dsOut) - length(idxs));
+      verbose && cat(verbose, "Number of files dropped: ", length(dsOut) - length(idxs));
       verbose && cat(verbose, "Number of files kept: ", length(idxs));
       dsOut <- extract(dsOut, idxs);
       verbose && exit(verbose);
@@ -449,7 +437,7 @@ setMethodS3("extractTupleOfDataFiles", "MultiSourceCopyNumberNormalization", fun
   # Arguments 'dsList':
   if (is.list(dsList)) {
     className <- "AromaUnitTotalCnBinarySet";
-    for (kk in seq(along=dsList)) {
+    for (kk in seq_along(dsList)) {
       ds <- dsList[[kk]];
       ds <- Arguments$getInstanceOf(ds, className, .name="dsList");
     }
@@ -571,7 +559,7 @@ setMethodS3("getSmoothedDataSets", "MultiSourceCopyNumberNormalization", functio
     verbose && printf(verbose, "Bandwidth (sd): %.2f\n", sd);
 
     dsSmoothList <- list();
-    for (kk in seq(along=dsList)) {
+    for (kk in seq_along(dsList)) {
       ds <- dsList[[kk]];
       verbose && enter(verbose, sprintf("Data set %d ('%s') of %d",
                                          kk, getFullName(ds), length(dsList)));
@@ -669,30 +657,23 @@ setMethodS3("getSubsetToFit", "MultiSourceCopyNumberNormalization", function(thi
 
 
 setMethodS3("getParameters", "MultiSourceCopyNumberNormalization", function(this, ...) {
-  params <- list(
-    subsetToFit = getSubsetToFit(this, ...),
-    fitUgp = getFitAromaUgpFile(this, ...),
-    align = this$.align,
-    targetDimension = this$.targetDimension,
-    pcBandwidth = this$.pcBandwidth
-  );
+  params <- NextMethod("getParameters");
+  
+  params$subsetToFit <- getSubsetToFit(this, ...);
+  params$fitUgp <- getFitAromaUgpFile(this, ...);
+  params$align <- this$.align;
+  params$targetDimension <- this$.targetDimension;
+  params$pcBandwidth <- this$.pcBandwidth;
 
   params;
-})
-
-
-setMethodS3("getParametersAsString", "MultiSourceCopyNumberNormalization", function(this, ...) {
-  params <- getParameters(this, expand=FALSE);
-  params <- trim(capture.output(str(params)))[-1];
-  params <- gsub("^[$][ ]*", "", params);
-  params <- gsub(" [ ]*", " ", params);
-  params <- gsub("[ ]*:", ":", params);
-  params;
-}, private=TRUE) 
+}, protected=TRUE)
 
 
 setMethodS3("getPrincipalCurveEstimator", "MultiSourceCopyNumberNormalization", function(this, ...) {
-  params <- getParameters(this, verbose=less(verbose, 1));
+  # aroma.light::fitPrincipalCurve()
+  require("aroma.light") || throw("Package not loaded: aroma.light");
+
+  params <- getParameters(this);
   df <- params$pcBandwidth;
   if (is.null(df)) {
     df <- 5;
@@ -823,7 +804,7 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
 
   # Identify and exlude missing data sets
   keep <- sapply(dfSList, FUN=function(df) !identical(df, NA));
-  keep <- whichVector(keep);
+  keep <- which(keep);
   dfSList <- dfSList[keep];
 
 
@@ -924,7 +905,7 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   targetChannel <- NULL;
   if (!is.null(targetChannel)) {
-##     for (kk in seq(length=dim[2])) {
+##     for (kk in seq_len(dim[2])) {
 ##       if (kk == targetChannel) {
 ##         targetTransform <- function(x, ...) x;
 ##       } else {
@@ -955,7 +936,7 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
     unitsS <- list();
     for (chr in chromosomes) {
       chrStr <- sprintf("Chr%02d", chr);
-      unitsS[[chrStr]] <- whichVector(values == chr);
+      unitsS[[chrStr]] <- which(values == chr);
     }
     rm(values);
 #    verbose && str(verbose, unitsS);
@@ -977,7 +958,7 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
     verbose && exit(verbose);
 
     verbose && enter(verbose, "Loading and backtransforming *smoothed* data");
-    for (kk in seq(length=nbrOfArrays)) {
+    for (kk in seq_len(nbrOfArrays)) {
       dfS <- dfSList[[kk]];
       verbose && enter(verbose, sprintf("Source #%d ('%s') of %d", kk, 
                                         getFullName(dfS), nbrOfArrays));
@@ -1014,7 +995,7 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
     rownames(mus) <- names(unitsS);
     dmus <- mus;
 
-    for (chr in seq(length=nbrOfChromosomes)) {
+    for (chr in seq_len(nbrOfChromosomes)) {
       chrStr <- sprintf("Chr%02d", chr);
       verbose && enter(verbose, sprintf("Chromosome #%d of %d", 
                                                      chr, nbrOfChromosomes));
@@ -1023,7 +1004,7 @@ setMethodS3("fitOne", "MultiSourceCopyNumberNormalization", function(this, dfLis
 
       verbose && enter(verbose, "Extracting backtransformed *smoothed* data");
       yList <- list();
-      for (kk in seq(length=nbrOfArrays)) {
+      for (kk in seq_len(nbrOfArrays)) {
         yList[[kk]] <- YSN[unitsCC,kk,drop=TRUE];
       } # for (kk ...)
       verbose && str(verbose, yList);
@@ -1153,7 +1134,7 @@ setMethodS3("normalizeOne", "MultiSourceCopyNumberNormalization", function(this,
 
   nbrOfArrays <- length(dfList);
   dfNList <- vector("list", nbrOfArrays);
-  for (kk in seq(length=nbrOfArrays)) {
+  for (kk in seq_len(nbrOfArrays)) {
     df <- dfList[[kk]];
     verbose && enter(verbose, sprintf("Source #%d ('%s') of %d", kk, 
                                             getFullName(df), nbrOfArrays));
@@ -1208,7 +1189,7 @@ setMethodS3("normalizeOne", "MultiSourceCopyNumberNormalization", function(this,
         listOfUnits <- list();
         for (chr in chromosomes) {
           chrStr <- sprintf("Chr%02d", chr);
-          subset <- whichVector(values == chr);
+          subset <- which(values == chr);
           listOfUnits[[chrStr]] <- subset;
         }
         rm(values);
@@ -1386,7 +1367,7 @@ setMethodS3("process", "MultiSourceCopyNumberNormalization", function(this, ...,
 
 
   verbose && enter(verbose, "Processing each array");
-  for (kk in seq(length=nbrOfSamples)) {
+  for (kk in seq_len(nbrOfSamples)) {
     name <- allNames[kk];
     verbose && enter(verbose, sprintf("Sample #%d ('%s') of %d", 
                                                     kk, name, nbrOfSamples));
@@ -1401,7 +1382,7 @@ setMethodS3("process", "MultiSourceCopyNumberNormalization", function(this, ...,
    
     verbose && enter(verbose, "Check if all arrays are already normalized");
     isDone <- TRUE;
-    for (jj in seq(along=dfList)) {
+    for (jj in seq_along(dfList)) {
       df <- dfList[[jj]];
       outputPath <- outputPaths[[jj]];
       filename <- getFilename(df);
@@ -1458,6 +1439,16 @@ setMethodS3("process", "MultiSourceCopyNumberNormalization", function(this, ...,
 
 ###########################################################################
 # HISTORY:
+# 2013-01-07
+# o BUG FIX: getPrincipalCurveEstimator() used non-existing 'verbose'.
+# 2012-11-21
+# o Now class utilizes the new ParametersInterface.
+# 2012-11-13
+# o CLEANUP/FIX: Used "cache:" field modified instead of "cached:".
+#   After correction, all clearCache() methods could be dropped.
+# 2012-04-16
+# o MultiSourceCopyNumberNormalization() now explicitly requires the
+#   'aroma.light' package, instead of assuming it is loaded.
 # 2010-04-04
 # o Added citation for MSCN to the Rdocs.
 # 2010-01-14

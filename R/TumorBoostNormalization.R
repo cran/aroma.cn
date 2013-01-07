@@ -55,7 +55,7 @@ setConstructorS3("TumorBoostNormalization", function(dsT=NULL, dsN=NULL, gcN=NUL
     # Arguments 'dsT' and 'dsN'
     dsList <- list(dsT=dsT, dsN=dsN);
     className <- "AromaUnitFracBCnBinarySet";
-    for (kk in seq(along=dsList)) {
+    for (kk in seq_along(dsList)) {
       key <- names(dsList)[kk];
       ds <- dsList[[kk]];
       ds <- Arguments$getInstanceOf(ds, className, .name="key");
@@ -69,12 +69,12 @@ setConstructorS3("TumorBoostNormalization", function(dsT=NULL, dsN=NULL, gcN=NUL
     for (jj in 1:(length(dsList)-1)) {
       keyJJ <- names(dsList)[jj];
       dsJJ <- dsList[[jj]];
-      nJJ <- nbrOfFiles(dsJJ);
+      nJJ <- length(dsJJ);
       chipTypeJJ <- getChipType(dsJJ);
       for (kk in (jj+1):length(dsList)) {
         keyKK <- names(dsList)[kk];
         dsKK <- dsList[[kk]];
-        nKK <- nbrOfFiles(dsKK);
+        nKK <- length(dsKK);
         chipTypeKK <- getChipType(dsKK);
 
         # Assert that each data set contains the same number of files
@@ -128,7 +128,7 @@ setMethodS3("as.character", "TumorBoostNormalization", function(x, ...) {
 
   dsList <- getDataSets(this);
   s <- c(s, sprintf("Data sets (%d):", length(dsList)));
-  for (kk in seq(along=dsList)) {
+  for (kk in seq_along(dsList)) {
     ds <- dsList[[kk]];
     s <- c(s, sprintf("<%s>:", capitalize(names(dsList)[kk])));
     s <- c(s, as.character(ds));
@@ -136,7 +136,7 @@ setMethodS3("as.character", "TumorBoostNormalization", function(x, ...) {
  
   class(s) <- "GenericSummary";
   s;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getAsteriskTags", "TumorBoostNormalization", function(this, collapse=NULL, ...) {
@@ -157,7 +157,7 @@ setMethodS3("getAsteriskTags", "TumorBoostNormalization", function(this, collaps
   }
 
   tags;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 setMethodS3("getName", "TumorBoostNormalization", function(this, ...) {
@@ -234,7 +234,8 @@ setMethodS3("getNormalGenotypeCallSet", "TumorBoostNormalization", function(this
 
 setMethodS3("getRootPath", "TumorBoostNormalization", function(this, ...) {
   "totalAndFracBData";
-})
+}, protected=TRUE)
+
 
 setMethodS3("getPath", "TumorBoostNormalization", function(this, create=TRUE, ...) {
   # Create the (sub-)directory tree for the data set
@@ -250,7 +251,14 @@ setMethodS3("getPath", "TumorBoostNormalization", function(this, create=TRUE, ..
   chipType <- getChipType(ds, fullname=FALSE);
 
   # The full path
-  path <- filePath(rootPath, fullname, chipType, expandLinks="any");
+  path <- filePath(rootPath, fullname, chipType);
+
+  # Create path?
+  if (create) {
+    path <- Arguments$getWritablePath(path);
+  } else {
+    path <- Arguments$getReadablePath(path, mustExist=FALSE);
+  }
 
   # Verify that it is not the same as the input path
   inPath <- getPath(getInputDataSet(this));
@@ -258,22 +266,13 @@ setMethodS3("getPath", "TumorBoostNormalization", function(this, create=TRUE, ..
     throw("The generated output data path equals the input data path: ", path, " == ", inPath);
   }
 
-  # Create path?
-  if (create) {
-    if (!isDirectory(path)) {
-      mkdirs(path);
-      if (!isDirectory(path))
-        throw("Failed to create output directory: ", path);
-    }
-  }
-
   path;
-})
+}, protected=TRUE)
 
 
 setMethodS3("nbrOfFiles", "TumorBoostNormalization", function(this, ...) {
   ds <- getInputDataSet(this);
-  nbrOfFiles(ds);
+  length(ds);
 })
 
 
@@ -311,7 +310,7 @@ setMethodS3("process", "TumorBoostNormalization", function(this, ..., force=FALS
   verbose && cat(verbose, "Chip type: ", chipType);
 
   outPath <- getPath(this);
-  for (kk in seq(length=nbrOfFiles)) {
+  for (kk in seq_len(nbrOfFiles)) {
     dfList <- lapply(dsList, FUN=getFile, kk);
     dfT <- dfList$tumor;
     name <- getName(dfT);
@@ -333,7 +332,7 @@ setMethodS3("process", "TumorBoostNormalization", function(this, ..., force=FALS
 
     if (is.null(units)) {
       verbose && enter(verbose, "Identifying units to read");
-      units <- seq(length=nbrOfUnits(dfList$tumor));
+      units <- seq_len(nbrOfUnits(dfList$tumor));
       verbose && exit(verbose);
     }
 
@@ -371,10 +370,10 @@ setMethodS3("process", "TumorBoostNormalization", function(this, ..., force=FALS
     } else if (flavor == "v2") {
       b <- rep(1, length(delta));
       isDown <- (betaT < betaN);
-      idxs <- whichVector(isDown);
+      idxs <- which(isDown);
       # NOTE: It is possible that 'b' has NA:s.
       b[idxs] <- betaT[idxs]/betaN[idxs];
-      idxs <- whichVector(!isDown);
+      idxs <- which(!isDown);
       # NOTE: It is possible that 'b' has NA:s.
       b[idxs] <- (1-betaT[idxs])/(1-betaN[idxs]);
       rm(isDown,isHomA,isHomB,idxs);
@@ -384,10 +383,10 @@ setMethodS3("process", "TumorBoostNormalization", function(this, ..., force=FALS
       isHomB <- (muN == 1);
       isHet <- !isHomA & !isHomB;
       isDown <- (betaT < betaN);
-      idxs <- whichVector((isHet & isDown) | isHomA);
+      idxs <- which((isHet & isDown) | isHomA);
       # NOTE: It is possible that 'b' has NA:s.
       b[idxs] <- betaT[idxs]/betaN[idxs];
-      idxs <- whichVector((isHet & !isDown) | isHomB);
+      idxs <- which((isHet & !isDown) | isHomB);
       # NOTE: It is possible that 'b' has NA:s.
       b[idxs] <- (1-betaT[idxs])/(1-betaN[idxs]);
       rm(isDown,isHet,isHomA,isHomB,idxs);
@@ -395,10 +394,10 @@ setMethodS3("process", "TumorBoostNormalization", function(this, ..., force=FALS
       b <- rep(1, length(delta));
       isHet <- (muN != 0 & muN != 1);
       isDown <- (betaT < betaN);
-      idxs <- whichVector(isHet & isDown);
+      idxs <- which(isHet & isDown);
       # NOTE: It is possible that 'b' has NA:s.
       b[idxs] <- betaT[idxs]/betaN[idxs];
-      idxs <- whichVector(isHet & !isDown);
+      idxs <- which(isHet & !isDown);
       # NOTE: It is possible that 'b' has NA:s.
       b[idxs] <- (1-betaT[idxs])/(1-betaN[idxs]);
       rm(isDown,isHet,idxs);
@@ -417,7 +416,7 @@ setMethodS3("process", "TumorBoostNormalization", function(this, ..., force=FALS
       verbose && enter(verbose, "Correcting for signal compression");
 
       isHom <- (muN == 0 | muN == 1);
-      idxs <- whichVector(isHom);
+      idxs <- which(isHom);
       eta <- median(abs(betaT[idxs]-1/2), na.rm=TRUE);
       verbose && cat(verbose, "Signal compression in homozygous SNPs before TBN");
       verbose && str(verbose, 1/2-eta);
@@ -430,9 +429,9 @@ setMethodS3("process", "TumorBoostNormalization", function(this, ..., force=FALS
       
       isHet <- !isHom;
       isDown <- (betaTN < 1/2);
-      idxs <- whichVector(isHet & isDown);
+      idxs <- which(isHet & isDown);
       betaTN[idxs] <- 1/2 - sf * (1/2 - betaTN[idxs]);
-      idxs <- whichVector(isHet & !isDown);
+      idxs <- which(isHet & !isDown);
       betaTN[idxs] <- 1/2 + sf * (betaTN[idxs] - 1/2);
 
       rm(isDown, isHom, isHet, idxs, eta, etaC, sf);

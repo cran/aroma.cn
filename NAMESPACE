@@ -1,8 +1,13 @@
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # IMPORTS
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+importFrom("R.methodsS3", "throw");
+importFrom("R.methodsS3", "setMethodS3");
+
 # importFrom(R.utils, cat)
 import(R.utils)
+importFrom("matrixStats", "weightedMedian")
+import(PSCBS)
 
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -

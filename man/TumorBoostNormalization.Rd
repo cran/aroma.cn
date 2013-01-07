@@ -72,8 +72,6 @@ extends \link[R.oo]{Object}\cr
  \tab \code{getNormalDataSet} \tab  -\cr
  \tab \code{getNormalGenotypeCallSet} \tab  -\cr
  \tab \code{getOutputDataSet} \tab  -\cr
- \tab \code{getPath} \tab  -\cr
- \tab \code{getRootPath} \tab  -\cr
  \tab \code{getTags} \tab  -\cr
  \tab \code{nbrOfFiles} \tab  -\cr
  \tab \code{process} \tab  -\cr
@@ -82,7 +80,7 @@ extends \link[R.oo]{Object}\cr
 
 
  \bold{Methods inherited from Object}:\cr
-asThis, getChecksum, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save
+asThis, $, $<-, [[, [[<-, as.character, attach, attachLocally, clearCache, clearLookupCache, clone, detach, equals, extend, finalize, gc, getEnvironment, getFieldModifier, getFieldModifiers, getFields, getInstantiationTime, getStaticInstance, hasField, hashCode, ll, load, objectSize, print, registerFinalizer, save
 
 
  }

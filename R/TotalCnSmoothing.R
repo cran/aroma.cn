@@ -37,15 +37,14 @@ setConstructorS3("TotalCnSmoothing", function(dataSet=NULL, ..., targetUgp=NULL,
 
 
 setMethodS3("getParameters", "TotalCnSmoothing", function(this, ...) {
-  params <- list(
-    targetUgp = this$.targetUgp
-  );
+  params <- NextMethod("getParameters");
+  params$targetUgp <- this$.targetUgp;
   params;
-}, private=TRUE);
+}, protected=TRUE);
 
 
 setMethodS3("getAsteriskTags", "TotalCnSmoothing", function(this, collapse=NULL, ...) {
-  tags <- NextMethod("getAsteriskTags", this, collapse=NULL, ...);
+  tags <- NextMethod("getAsteriskTags", collapse=NULL);
 
   # Add class-specific tags
 
@@ -69,7 +68,7 @@ setMethodS3("getAsteriskTags", "TotalCnSmoothing", function(this, collapse=NULL,
 
 setMethodS3("getRootPath", "TotalCnSmoothing", function(this, ...) {
   "smoothCnData";
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -78,13 +77,20 @@ setMethodS3("getTargetUgpFile", "TotalCnSmoothing", function(this, ...) {
 })
 
 setMethodS3("getPath", "TotalCnSmoothing", function(this, create=TRUE, ...) {
-  path <- NextMethod("getPath", this, create=FALSE, ...);
+  path <- NextMethod("getPath", create=FALSE);
   path <- dirname(path);
   targetUgp <- getTargetUgpFile(this);
   chipType <- getChipType(targetUgp, fullname=FALSE);
 
   # The full path
-  path <- filePath(path, chipType, expandLinks="any");
+  path <- filePath(path, chipType);
+
+  # Create path?
+  if (create) {
+    path <- Arguments$getWritablePath(path);
+  } else {
+    path <- Arguments$getReadablePath(path, mustExist=FALSE);
+  }
 
   # Verify that it is not the same as the input path
   inPath <- getPath(getInputDataSet(this));
@@ -92,17 +98,8 @@ setMethodS3("getPath", "TotalCnSmoothing", function(this, create=TRUE, ...) {
     throw("The generated output data path equals the input data path: ", path, " == ", inPath);
   }
 
-  # Create path?
-  if (create) {
-    if (!isDirectory(path)) {
-      mkdirs(path);
-      if (!isDirectory(path))
-        throw("Failed to create output directory: ", path);
-    }
-  }
-
   path;
-}, private=TRUE)
+}, protected=TRUE)
 
 
 
@@ -166,7 +163,87 @@ setMethodS3("getTargetPositions", "TotalCnSmoothing", function(this, ..., force=
 
 
 
-setMethodS3("smoothRawCopyNumbers", "TotalCnSmoothing", abstract=TRUE);
+setMethodS3("smoothRawCopyNumbers", "TotalCnSmoothing", abstract=TRUE, protected=TRUE);
+
+
+setMethodS3("getOutputFileExtension", "TotalCnSmoothing", function(this, ...) {
+  ds <- getInputDataSet(this);
+  df <- getFile(ds, 1);
+  ext <- getFilenameExtension(df);
+  sprintf(".%s", ext);
+}, protected=TRUE)
+
+
+setMethodS3("getOutputFileSetClass", "TotalCnSmoothing", function(this, ...) {
+  ds <- getInputDataSet(this);
+  className <- class(ds)[1];
+  Class$forName(className);
+}, protected=TRUE)
+
+
+setMethodS3("getOutputFileClass", "TotalCnSmoothing", function(this, ...) {
+  setClass <- getOutputFileSetClass(this, ...);
+  setInstance <- newInstance(setClass);
+  className <- getFileClass(setInstance);
+  Class$forName(className);
+}, protected=TRUE)
+
+
+setMethodS3("getOutputDataSet0", "TotalCnSmoothing", function(this, pattern=NULL, className=NULL, ..., verbose=FALSE) {
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Validate arguments
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Argument 'verbose':
+  verbose <- Arguments$getVerbose(verbose);
+  if (verbose) {
+    pushState(verbose);
+    on.exit(popState(verbose));
+  }
+
+  # Argument 'pattern':
+  if (!is.null(pattern)) {
+    pattern <- Arguments$getRegularExpression(pattern=pattern);
+  }
+
+
+  verbose && enter(verbose, "Retrieving existing set of output files");
+  ds <- getInputDataSet(this);
+  outPath <- getPath(this);
+  if (is.null(className)) {
+    clazz <- getOutputFileSetClass(this);
+    className <- getName(clazz);
+  }
+  verbose && cat(verbose, "Class: ", className);
+
+  path <- getPath(this);
+  verbose && cat(verbose, "Path: ", path);
+
+  if (is.null(pattern)) {
+    # Default filename pattern find non-private (no dot prefix) files with
+    # the same file name extension as the input data set.
+    fileExt <- getOutputFileExtension(this);
+    fileExt <- c(fileExt, tolower(fileExt), toupper(fileExt));
+    fileExt <- sprintf("(%s)", paste(unique(fileExt), collapse="|"));
+    verbose && cat(verbose, "Expected file extensions: ", fileExt);
+    pattern <- sprintf("^[^.].*%s$", fileExt);
+  }
+  verbose && cat(verbose, "Pattern: ", pattern);
+
+  verbose && enter(verbose, sprintf("Calling %s$forName()", className));
+  clazz <- Class$forName(className);
+  args <- list(path=path, pattern=pattern, ...);
+  verbose && str(verbose, args);
+  args$verbose <- less(verbose);
+  staticMethod <- clazz$byPath;
+  dsOut <- do.call("staticMethod", args=args);
+  rm(staticMethod, args); # Not needed anymore
+  verbose && exit(verbose);
+
+  verbose && exit(verbose);
+
+  dsOut;
+}, protected=TRUE)
+
 
 
 setMethodS3("process", "TotalCnSmoothing", function(this, ..., verbose=FALSE) {
@@ -207,20 +284,26 @@ setMethodS3("process", "TotalCnSmoothing", function(this, ..., verbose=FALSE) {
   verbose && cat(verbose, "Total number of target units:", nbrOfUnits);
   verbose && exit(verbose);
 
+  # Get Class object for the output files
+  clazz <- getOutputFileClass(this);
+
+  # Get the filename extension for output files
+  ext <- getOutputFileExtension(this);
+
+
   nbrOfArrays <- length(ds);
-  for (kk in seq(ds)) {
+  for (kk in seq_along(ds)) {
     df <- getFile(ds, kk);
     verbose && enter(verbose, sprintf("Array %d ('%s') of %d", 
                                             kk, getName(df), nbrOfArrays));
 
     path <- getPath(this);
     fullname <- getFullName(df);
-    ext <- getFilenameExtension(df);
-    filename <- sprintf("%s.%s", fullname, ext);
+    filename <- sprintf("%s%s", fullname, ext);
     pathname <- Arguments$getReadablePathname(filename, path=path, 
                                                          mustExist=FALSE);
-    className <- class(df)[1];
-    clazz <- Class$forName(className);
+    verbose && cat(verbose, "Output pathname: ", pathname);
+
     if (isFile(pathname)) {
       dfOut <- newInstance(clazz, filename=pathname);
       if (nbrOfUnits != nbrOfUnits(dfOut)) {
@@ -234,10 +317,10 @@ setMethodS3("process", "TotalCnSmoothing", function(this, ..., verbose=FALSE) {
     verbose && print(verbose, df);
 
     # Preallocate vector
-    M <- rep(as.double(NA), nbrOfUnits);
+    M <- rep(as.double(NA), times=nbrOfUnits);
 
     verbose && enter(verbose, "Reading and smoothing input data");
-    for (cc in seq(along=targetList)) {
+    for (cc in seq_along(targetList)) {
       target <- targetList[[cc]];
       chromosome <- target$chromosome;
       chrTag <- sprintf("Chr%02d", chromosome);
@@ -320,13 +403,18 @@ setMethodS3("process", "TotalCnSmoothing", function(this, ..., verbose=FALSE) {
 
 
 setMethodS3("getOutputFiles", "TotalCnSmoothing", function(this, ...) {
-  NextMethod("getOutputFiles", pattern=".*[.]asb$", ...);
+  NextMethod("getOutputFiles", pattern=".*[.]asb$");
 }, protected=TRUE) 
 
 
 
 ############################################################################
 # HISTORY:
+# 2012-10-11
+# o Added custom getOutputDataSet0() for TotalCnSmoothing that utilizes
+#   getOutputFileExtension().
+# o Added getOutputFileClass() and getOutputFileExtension() for
+#   TotalCnSmoothing.
 # 2011-12-15
 # o Moved argument 'bandwidth' to TotalCnKernelSmoothing.
 # o ROBUSTNESS: Now process() of TotalCnSmoothing write output atomically.

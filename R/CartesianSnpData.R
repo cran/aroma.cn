@@ -6,7 +6,7 @@ setConstructorS3("CartesianSnpData", function(data=NULL, ...) {
 
 
 setMethodS3("plot", "CartesianSnpData", function(x, xlim=range(data, na.rm=TRUE), ylim=xlim, ...) {
-  NextMethod("plot", x, xlim=xlim, ylim=ylim, ...);
+  NextMethod("plot", xlim=xlim, ylim=ylim);
 })
 
 
@@ -63,21 +63,21 @@ setMethodS3("pairedBoost", "CartesianSnpData", function(this, dataN, scaleByCN=T
   delta <- array(0, dim=dim(thetaN));
 
   # AA:s
-  idxs <- whichVector(isAA);
+  idxs <- which(isAA);
   delta[idxs,2] <- thetaN[idxs,2]-thetaNC[idxs,2];
   if (flavor == "diagonal") {
     delta[idxs,1] <- -delta[idxs,2];
   }
 
   # BB:s
-  idxs <- whichVector(isBB);
+  idxs <- which(isBB);
   delta[idxs,1] <- thetaN[idxs,1]-thetaNC[idxs,1];
   if (flavor == "diagonal") {
     delta[idxs,2] <- -delta[idxs,1];
   }
 
   # AB:s
-  idxs <- whichVector(isAB);
+  idxs <- which(isAB);
   delta[idxs,] <- thetaN[idxs,]-thetaNC[idxs,];
 
   # Scale by CN?

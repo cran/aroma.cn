@@ -16,7 +16,9 @@
  Tests for allelic balance in a genomic region.
 }
 
-\usage{\method{testAllelicBalanceByBAFs}{default}(betaT, muN, flavor=c("var", "mean"), ..., verbose=FALSE)}
+\usage{
+\method{testAllelicBalanceByBAFs}{default}(betaT, muN, flavor=c("var", "mean"), ..., verbose=FALSE)
+}
 
 \arguments{
   \item{betaT}{A \code{\link[base]{numeric}} \code{\link[base]{vector}} of J tumor allele B fractions (BAFs).}
@@ -32,11 +34,10 @@
 
 \examples{
 
-if (require("PSCBS") && Sys.getenv("_R_CHECK_FULL_") != "") {
+if (Sys.getenv("_R_CHECK_FULL_") != "" && require("PSCBS")) {
 
 # Load example ASCN data
-pathname <- system.file("data-ex/PairedPSCBS,exData,chr01.Rbin", package="PSCBS");
-data <- R.utils::loadObject(pathname);
+data <- PSCBS::exampleData("paired.chr01");
 
 # PSCBS segmentation
 fit <- segmentByPairedPSCBS(data, verbose=-10);
@@ -50,7 +51,7 @@ print(fitN2);
 } # if (require("PSCBS"))
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson, Pierre Neuvial}
 
 
 \keyword{internal}

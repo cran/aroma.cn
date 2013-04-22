@@ -9,9 +9,7 @@
 \name{callCopyNeutralRegions.PairedPSCBS}
 \alias{callCopyNeutralRegions.PairedPSCBS}
 \alias{PairedPSCBS.callCopyNeutralRegions}
-\alias{callCopyNeutralRegions.PairedPSCBS}
 \alias{callCopyNeutralRegions,PairedPSCBS-method}
-
 
 \title{Calls regions that are copy neutral}
 
@@ -19,13 +17,14 @@
  Calls regions that are copy neutral from the allele B fractions (BAF).
 }
 
-\usage{\method{callCopyNeutralRegions}{PairedPSCBS}(fit, ...)}
+\usage{
+\method{callCopyNeutralRegions}{PairedPSCBS}(fit, ...)
+}
 
 \arguments{
   \item{fit}{A \code{\link[PSCBS]{PairedPSCBS}} fit object as returned by
     \code{\link[PSCBS]{segmentByPairedPSCBS}}.}
   \item{...}{Additional arguments passed to
-    \code{\link[aroma.cn]{findNeutralCopyNumberState}} and
     \code{\link[PSCBS]{callCopyNeutral.PairedPSCBS}}.}
 }
 
@@ -36,11 +35,10 @@
 
 \examples{
 
-if (require("PSCBS") && Sys.getenv("_R_CHECK_FULL_") != "") {
+if (Sys.getenv("_R_CHECK_FULL_") != "" && require("PSCBS")) {
 
 # Load example ASCN data
-pathname <- system.file("data-ex/PairedPSCBS,exData,chr01.Rbin", package="PSCBS");
-data <- R.utils::loadObject(pathname);
+data <- PSCBS::exampleData("paired.chr01");
 
 # PSCBS segmentation
 fit <- segmentByPairedPSCBS(data, verbose=-10);
@@ -56,7 +54,7 @@ fitN <- normalizeBAFsByRegions(fitC, verbose=-10);
 } # if (require("PSCBS"))
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
+\author{Henrik Bengtsson}
 
 
 \keyword{internal}

@@ -9,21 +9,23 @@
 
 \name{normalizePrincipalCurve.matrix}
 \alias{normalizePrincipalCurve.matrix}
-\alias{normalizePrincipalCurve.matrix}
-
 
 \encoding{latin1}
 
-\title{Fit a principal curve in K dimensions}
+\title{Normalizes data in K dimensions using principal curves}
 
 \description{
-  Fit a principal curve in K dimensions.
+  Normalizes data in K dimensions using principal curves such that afterward the data cluster (approximately
+  linearly) along the diagonal (in K dimensions).
 }
 
-\usage{\method{normalizePrincipalCurve}{matrix}(x, ..., center=TRUE, returnFit=FALSE)}
+\usage{
+\method{normalizePrincipalCurve}{matrix}(x, ..., center=TRUE, returnFit=FALSE)
+}
 
 \arguments{
- \item{x}{An NxK \code{\link[base]{matrix}} (K>=2) where the columns represent the dimension.}
+ \item{x}{An NxK \code{\link[base]{matrix}} where the columns represent the
+     (K >= 2) dimensions.}
  \item{...}{Additional arguments passed to
      \code{\link[aroma.light]{fitPrincipalCurve}} used for fitting the model.}
  \item{center}{If \code{\link[base:logical]{TRUE}}, normalized data is centered such that the median
@@ -36,8 +38,6 @@
   Returns an NxK \code{\link[base]{matrix}}.
 }
 
-\author{Henrik Bengtsson (\url{http://www.braju.com/R/})}
-
 \references{
   [1] Hastie, T. and Stuetzle, W, \emph{Principal Curves}, JASA, 1989.
 }
@@ -46,4 +46,9 @@
   \code{\link[aroma.light]{fitPrincipalCurve}} and
   \code{\link[aroma.light]{backtransformPrincipalCurve}}.
 }
+
+\author{Henrik Bengtsson}
+
+
 \keyword{methods}
+\keyword{internal}

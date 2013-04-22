@@ -62,7 +62,7 @@
 # @synopsis
 #
 # \arguments{
-#   \item{fit}{A PairedPSCBS fit object as returned by 
+#   \item{fit}{A PairedPSCBS fit object as returned by
 #     @see "PSCBS::segmentByPairedPSCBS".}
 #   \item{by}{A @character string specifying if the normalization function
 #     should be estimated based on TumorBoost normalized or non-normalized
@@ -73,7 +73,7 @@
 # }
 #
 # \value{
-#   Returns a PairedPSCBS fit object where the region-level 
+#   Returns a PairedPSCBS fit object where the region-level
 #   decrease-in-heterozygosity (DH) means have been normalized,
 #   as well as the locus-specific tumor allele B fractions.
 # }
@@ -87,7 +87,7 @@
 #
 # @examples "../incl/normalizeBAFsByRegions.PairedPSCBS.Rex"
 #
-# @author
+# @author "HB, PN"
 #
 # \seealso{
 #   Internally @see "aroma.cn::normalizeMirroredBAFsByRegions" is used.
@@ -98,7 +98,7 @@
 setMethodS3("normalizeBAFsByRegions", "PairedPSCBS", function(fit, by=c("betaTN", "betaT"), ..., force=FALSE, cache=TRUE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'by':
   by <- match.arg(by);
 
@@ -121,7 +121,7 @@ setMethodS3("normalizeBAFsByRegions", "PairedPSCBS", function(fit, by=c("betaTN"
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Check for cached results
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  key <- list(method="normalizeBAFsByRegions", class=class(fit)[1], 
+  key <- list(method="normalizeBAFsByRegions", class=class(fit)[1],
     data=as.data.frame(fit),
     version="2011-11-02"
   );
@@ -150,17 +150,22 @@ setMethodS3("normalizeBAFsByRegions", "PairedPSCBS", function(fit, by=c("betaTN"
   nbrOfSegments <- nrow(segs);
   verbose && cat(verbose, "Number of segments: ", nbrOfSegments);
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # Get mean estimators
+  estList <- getMeanEstimators(fit, "dh");
+  avgDH <- estList$dh;
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Extract data
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   chromosome <- data$chromosome;
   x <- data$x;
   betaT <- data$betaT;
   betaTN <- data$betaTN;
- 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Calculate region-level mBAFs for homozygous SNPs
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Calculating region-level mBAFs for homozygous SNPs");
 
   # Calculate mBAFs for all loci
@@ -187,7 +192,7 @@ setMethodS3("normalizeBAFsByRegions", "PairedPSCBS", function(fit, by=c("betaTN"
     # Identify all homozygous SNPs in the region
     keep <- (chromosome == chrKK & xRange[1] <= x & x <= xRange[2] & isHom);
     keep <- which(keep);
-    mBAFhom <- mean(rho[keep], na.rm=TRUE);
+    mBAFhom <- avgDH(rho[keep], na.rm=TRUE);
     X[kk,] <- c(dh, mBAFhom, tcn);
   } # for (kk ...)
 
@@ -196,9 +201,9 @@ setMethodS3("normalizeBAFsByRegions", "PairedPSCBS", function(fit, by=c("betaTN"
   verbose && exit(verbose);
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Normalize region-level DHs
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Normalizing region-level mBAFs");
   XN <- normalizeMirroredBAFsByRegions(data=X, ..., verbose=verbose);
 
@@ -209,9 +214,9 @@ setMethodS3("normalizeBAFsByRegions", "PairedPSCBS", function(fit, by=c("betaTN"
   verbose && exit(verbose);
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Normalize locus-level data
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   verbose && enter(verbose, "Normalizing locus-level data accordingly");
   modelFit <- attr(XN, "modelFit");
   scale <- modelFit$scale;
@@ -241,9 +246,9 @@ setMethodS3("normalizeBAFsByRegions", "PairedPSCBS", function(fit, by=c("betaTN"
   verbose && exit(verbose);
 
 
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Return results
-  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   fitN <- fit;
   fitN$data <- data;
   fitN$output <- segs;
@@ -265,6 +270,9 @@ setMethodS3("normalizeBAFsByRegions", "PairedPSCBS", function(fit, by=c("betaTN"
 
 ##############################################################################
 # HISTORY
+# 2013-01-17 [HB]
+# o Updated normalizeBAFsByRegions() for PairedPSCBS to recognize when
+#   other mean-level estimators than the sample mean have been used.
 # 2011-10-16 [HB]
 # o Now using getLocusData(fit) and getSegments(fit) where applicable.
 # 2011-07-10 [HB]

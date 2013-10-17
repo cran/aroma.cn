@@ -1,6 +1,48 @@
 Package: aroma.cn
 =================
 
+Version: 1.5.0 [2013-10-17]
+o Minor tweaks to NAMESPACE.
+o Updated package dependencies.
+o Package requires R (>= 2.15.0) [and Bioc (>= 2.10.0)].
+
+
+Version: 1.4.6 [2013-10-07]
+o ROBUSTNESS: Now importing only what needs to be imported and
+  formally declaring all S3 methods in NAMESPACE.
+o CLEANUP: Dropped obsolete usage of autoload().
+
+
+Version: 1.4.5 [2013-09-28]
+o Now the 'aroma.affymetrix' Package object is also available when the
+  package is only loaded (but not attached).
+o Updated package dependencies.
+
+
+Version: 1.4.4 [2013-09-26]
+o BUG FIX: Forgot to import several functions from 'matrixStats'.
+  These went undetected because 'aroma.light' (< 1.31.6) attached
+  the 'matrixStats' in the past.
+
+
+Version: 1.4.3 [2013-09-20]
+o CLEANUP: Now importing only what is needed from PSCBS.
+o Updated package dependencies.
+
+
+Version: 1.4.2 [2013-08-21]
+o More internal updates.
+
+
+Version: 1.4.1 [2013-08-12]
+o BUG FIX: byPath(), byName() and findByPath() for PairedPSCBSFileSet
+  was also affected by the bug described in the R-devel thread
+  'Do *not* pass '...' to NextMethod() - it'll do it for you; missing
+  documentation, a bug or just me?' on Oct 16, 2012.
+o BUG FIX: getPath() for PairedPscbsModel would throw an error on
+  getInputDataSet() not defined.
+
+
 Version: 1.4.0 [2013-08-04]
 o SPEEDUP: Replaced all rm() calls with NULL assignments.
   Also removed several explicit garbage collector calls.

@@ -29,6 +29,12 @@
 #*/###########################################################################
 setMethodS3("calibrateC1C2", "PairedPSCBS", function(fit, ..., force=FALSE, cache=TRUE, debug=FALSE, verbose=FALSE) {
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  # Local functions
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  deShearC1C2 <- deShearC1C2_20120922;
+
+
+  # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Validate arguments
   # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   # Argument 'force':
@@ -328,7 +334,7 @@ setMethodS3("calibrateC1C2", "PairedPSCBS", function(fit, ..., force=FALSE, cach
   verbose && exit(verbose);
 
   fit12;
-})
+}) # calibrateC1C2()
 
 
 

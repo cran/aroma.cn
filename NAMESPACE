@@ -7,15 +7,19 @@ importFrom("R.oo", "setConstructorS3")
 ## Importing Class:es
 importFrom("R.oo", "BasicObject")
 importFrom("R.oo", "Object")
+importFrom("R.oo", "Class")
 importFrom("R.oo", "Package")
+importFrom("R.utils", "GenericSummary")
 importFrom("R.filesets", "GenericDataFile")
 importFrom("R.filesets", "GenericDataFileSet")
 importFrom("aroma.core", "AromaTransform")
 importFrom("aroma.core", "AromaUnitGenotypeCallFile")
+importFrom("aroma.core", "AromaUnitGenotypeCallSet")
 importFrom("aroma.core", "AromaUnitSignalBinaryFile")
+importFrom("aroma.core", "AromaUnitSignalBinarySet")
+importFrom("aroma.core", "AromaUnitPscnBinarySet")
 importFrom("aroma.core", "CopyNumberRegions")
 importFrom("aroma.core", "RawAlleleBFractions")
-
 
 ## Importing generics
 importFrom("aroma.core", "fit")
@@ -43,10 +47,12 @@ importFrom("aroma.core", "process")
 importFrom("aroma.core", "setRandomSeed")
 importFrom("R.filesets", "byName")
 importFrom("R.filesets", "byPath")
+importFrom("R.filesets", "dsApplyInPairs")
 importFrom("R.filesets", "findByName")
 importFrom("R.filesets", "getAsteriskTags")
 importFrom("R.filesets", "getDefaultFullName")
 importFrom("R.filesets", "getFullName")
+importFrom("R.filesets", "getNames")
 importFrom("R.filesets", "getTags")
 importFrom("R.filesets", "indexOf")
 importFrom("R.filesets", "nbrOfFiles")
@@ -85,6 +91,9 @@ importFrom("aroma.core", "segmentByCBS") ## Multi-sources: aroma.core, PSCBS
 importFrom("aroma.core", "updateGenotypes")
 importFrom("aroma.core", "writeFooter")
 importFrom("aroma.core", "xRange")
+importFrom("aroma.core", "colBinnedSmoothing.matrix")
+importFrom("aroma.core", "colKernelSmoothing.matrix")
+
 if (FALSE) { # Only suggesting aroma.light for now
   importFrom("aroma.light", "backtransformPrincipalCurve")
   importFrom("aroma.light", "backtransformXYCurve")
@@ -100,6 +109,8 @@ importFrom("matrixStats", "colSds")
 importFrom("matrixStats", "rowAlls")
 importFrom("matrixStats", "rowMins")
 importFrom("matrixStats", "weightedMedian")
+importFrom("PSCBS", "bootstrapSegmentsAndChangepoints")
+importFrom("PSCBS", "bootstrapTCNandDHByRegion")
 importFrom("PSCBS", "callCopyNeutral")
 importFrom("PSCBS", "dropRegions")
 importFrom("PSCBS", "estimateDeltaAB")
@@ -169,6 +180,7 @@ importFrom("R.utils", "saveObject")
 importFrom("R.utils", "seqToHumanReadable")
 importFrom("R.utils", "stext")
 importFrom("R.utils", "subplots")
+importFrom("R.utils", "use")
 
 ## Manually adjusted
 ## Cannot import explicitly from 'base';
@@ -179,9 +191,7 @@ importFrom("PSCBS", "callROH")
 importFrom("PSCBS", "callLOH")
 importFrom("PSCBS", "callAB")
 importFrom("R.utils", "Arguments")
-if (packageVersion("R.utils") < "1.27.5") {
-  importFrom("R.utils", "cat.default")
-}
+
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 # EXPORTS
@@ -219,6 +229,15 @@ S3method("nbrOfFiles", "AbstractCurveNormalization")
 S3method("process", "AbstractCurveNormalization")
 S3method("setTags", "AbstractCurveNormalization")
 
+# AromaUnitPscnBinarySet
+S3method("doSegmentByPairedPSCBS", "AromaUnitPscnBinarySet")
+
+# AromaUgpFile
+S3method("findLargeGaps", "AromaUgpFile")
+
+# AromaUnitPscnBinarySet
+S3method("findLargeGaps", "AromaUnitPscnBinarySet")
+
 # C1C2
 S3method("fitLoess2D", "C1C2")
 S3method("normalizeLoess2D", "C1C2")
@@ -243,8 +262,7 @@ S3method("plot", "CopyNumberRegions")
 
 # data.frame
 S3method("calculatePairedPSCNByGenotype", "data.frame")
-S3method("callChangePointFlips", "data.frame")
-S3method("estimateChangePointFlips", "data.frame")
+S3method("callPeaks", "data.frame")
 S3method("fitLoessKD", "data.frame")
 S3method("normalizeLoessKD", "data.frame")
 
@@ -255,9 +273,6 @@ S3method("testAllelicBalanceByBAFs", "default")
 S3method("extractC1C2", "list")
 
 # matrix
-S3method("callChangePointFlips", "matrix")
-S3method("estimateChangePointFlips", "matrix")
-S3method("fitDeltaXYShearModel", "matrix")
 S3method("fitLoessKD", "matrix")
 S3method("normalizeLoessKD", "matrix")
 S3method("normalizeMirroredBAFsByRegions", "matrix")
@@ -295,22 +310,18 @@ S3method("processOne", "NaiveFracBGenotyping")
 S3method("calculatePairedPSCNByGenotype", "numeric")
 S3method("calculateTumorPSCNByGenotypeUsingCTCN", "numeric")
 S3method("callXXorXY", "numeric")
+S3method("makeSmoothSplinePredict", "numeric")
 
 # PairedPSCBS
 S3method("backgroundCorrect", "PairedPSCBS")
 S3method("bootstrap", "PairedPSCBS")
-S3method("calibrateC1C2", "PairedPSCBS")
 S3method("callAllelicBalanceByBAFs", "PairedPSCBS")
 S3method("callCopyNeutralRegions", "PairedPSCBS")
-S3method("deShearC1C2_20120922", "PairedPSCBS")
 S3method("drawC1C2Density", "PairedPSCBS")
 S3method("estimateC2Bias", "PairedPSCBS")
-S3method("extractDeltaC1C2", "PairedPSCBS")
-S3method("extractPolarDeltaC1C2", "PairedPSCBS")
 S3method("findAtomicAberrations", "PairedPSCBS")
 S3method("fitC1C2Densities", "PairedPSCBS")
 S3method("fitC1C2Peaks", "PairedPSCBS")
-S3method("fitDeltaC1C2ShearModel", "PairedPSCBS")
 S3method("normalizeBAFsByRegions", "PairedPSCBS")
 S3method("plotC1C2Grid", "PairedPSCBS")
 S3method("resampleA", "PairedPSCBS")
@@ -391,14 +402,6 @@ S3method("[", "PruneCNA")
 S3method("extractGenerations", "PruneCNA")
 S3method("nbrOfGenerations", "PruneCNA")
 S3method("plotTracks", "PruneCNA")
-
-# PSCBS
-S3method("adjustAB", "PSCBS")
-S3method("callChangePointFlips", "PSCBS")
-S3method("deshearC1C2", "PSCBS")
-S3method("estimateDeshearingParameter", "PSCBS")
-S3method("estimateDeshearingParameter_20130815", "PSCBS")
-S3method("flipChangePoints", "PSCBS")
 
 # RawAlleleBFractions
 S3method("callGenotypes", "RawAlleleBFractions")

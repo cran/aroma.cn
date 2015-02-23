@@ -135,8 +135,7 @@ setMethodS3("as.character", "PairedPscbsModel", function(x, ...) {
   s <- c(s, sprintf("Number of arrays: %d", nbrOfFiles));
    s <- c(s, sprintf("Additional parameters: %s", getParametersAsString(this)));
 
-  class(s) <- "GenericSummary";
-  s;
+  GenericSummary(s);
 }, protected=TRUE)
 
 
@@ -177,9 +176,12 @@ setMethodS3("getOutputDataSet", "PairedPscbsModel", function(this, ...) {
 
 
 setMethodS3("getFitFunction", "PairedPscbsModel", function(this, ...) {
+  use("PSCBS (>= 0.43.0)")
+  segmentByPairedPSCBS <- PSCBS::segmentByPairedPSCBS
+
   defaultSeed <- getRandomSeed(this);
   fitFcn <- function(..., seed=defaultSeed) {
-    PSCBS::segmentByPairedPSCBS(..., seed=seed);
+    segmentByPairedPSCBS(..., seed=seed);
   }
   fitFcn;
 }, protected=TRUE)
@@ -559,7 +561,7 @@ setMethodS3("fit", "PairedPscbsModel", function(this, arrays=NULL, chromosomes=g
         t <- totalTime[3]/nbrOfLoci;
         printf(verbose, "Total time per 1000 locus (with %d loci): %.2fs\n", nbrOfLoci, 1000*t);
         # Get distribution of what is spend where
-        t <- base::lapply(timers, FUN=function(timer) unname(timer[3]));
+        t <- lapply(timers, FUN=function(timer) unname(timer[3]));
         t <- unlist(t);
         t <- 100 * t / t["total"];
         printf(verbose, "Fraction of time spent on different tasks: Fitting: %.1f%%, Reading: %.1f%%, Writing: %.1f%%, Explicit garbage collection: %.1f%%\n", t["fit"], t["read"], t["write"], t["gc"]);

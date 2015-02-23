@@ -1,13 +1,14 @@
 Package: aroma.cn
-Version: 1.5.0
-Depends: R (>= 2.15.0), R.utils (>= 1.27.1), aroma.core (>= 2.11.0)
-Imports: R.methodsS3 (>= 1.5.2), R.oo (>= 1.15.8), R.filesets (>=
-        2.3.0), R.cache (>= 0.8.1), matrixStats (>= 0.8.12), PSCBS (>=
-        0.38.4)
-Suggests: aroma.light (>= 1.28.0), DNAcopy (>= 1.30.0), GLAD (>=
+Version: 1.6.0
+Depends: R (>= 3.0.3), R.utils (>= 1.34.0), aroma.core (>= 2.13.0)
+Imports: R.methodsS3 (>= 1.7.0), R.oo (>= 1.18.0), R.filesets (>=
+        2.7.0), R.cache (>= 0.10.0), matrixStats (>= 0.14.0), PSCBS (>=
+        0.44.0)
+Suggests: aroma.light (>= 1.32.0), DNAcopy (>= 1.36.0), GLAD (>=
         1.12.0)
-Date: 2013-10-17
-Title: Copy-number analysis of large microarray data sets
+SuggestsNote: Recommended: aroma.light, DNAcopy
+Date: 2015-02-23
+Title: Copy-Number Analysis of Large Microarray Data Sets
 Authors@R: c(
   person("Henrik", "Bengtsson", role=c("aut", "cre", "cph"),
                                  email="henrikb@braju.com"),
@@ -18,15 +19,17 @@ Description: Methods for analyzing DNA copy-number data.  Specifically,
   technologies.  It also implements the TumorBoost method for normalizing
   paired tumor-normal SNP data.
 License: LGPL (>= 2.1)
-URL: http://www.aroma-project.org/
 LazyLoad: TRUE
 biocViews: ProprietaryPlatforms, aCGH, CopyNumberVariants, SNP,
         Microarray, OneChannel, TwoChannel, DataImport,
         DataRepresentation, Preprocessing, QualityControl
-Packaged: 2013-10-17 06:17:59 UTC; hb
+URL: http://www.aroma-project.org/,
+        https://github.com/HenrikBengtsson/aroma.cn
+BugReports: https://github.com/HenrikBengtsson/aroma.cn/issues
+NeedsCompilation: no
+Packaged: 2015-02-23 23:22:34 UTC; hb
 Author: Henrik Bengtsson [aut, cre, cph],
   Pierre Neuvial [aut]
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
-NeedsCompilation: no
 Repository: CRAN
-Date/Publication: 2013-10-17 09:47:11
+Date/Publication: 2015-02-24 08:03:32

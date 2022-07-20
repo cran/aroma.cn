@@ -1,12 +1,11 @@
 Package: aroma.cn
-Version: 1.6.1
-Depends: R (>= 3.1.1), R.utils (>= 2.1.0), aroma.core (>= 2.14.0)
-Imports: R.methodsS3 (>= 1.7.0), R.oo (>= 1.19.0), R.filesets (>=
-        2.9.0), R.cache (>= 0.10.0), matrixStats (>= 0.15.0), PSCBS (>=
-        0.50.0)
+Version: 1.7.0
+Depends: R (>= 3.1.2), R.utils (>= 2.11.0), aroma.core (>= 3.2.2)
+Imports: R.methodsS3 (>= 1.8.1), R.oo (>= 1.24.0), R.filesets (>=
+        2.14.0), R.cache (>= 0.15.0), matrixStats (>= 0.61.0), PSCBS
+        (>= 0.65.0), future.apply
 Suggests: aroma.light (>= 2.2.1), DNAcopy (>= 1.40.0), GLAD (>= 1.12.0)
 SuggestsNote: BioC (>= 3.0), Recommended: aroma.light, DNAcopy
-Date: 2015-10-27
 Title: Copy-Number Analysis of Large Microarray Data Sets
 Authors@R: c(
   person("Henrik", "Bengtsson", role=c("aut", "cre", "cph"),
@@ -22,13 +21,13 @@ LazyLoad: TRUE
 biocViews: ProprietaryPlatforms, aCGH, CopyNumberVariants, SNP,
         Microarray, OneChannel, TwoChannel, DataImport,
         DataRepresentation, Preprocessing, QualityControl
-URL: http://www.aroma-project.org/,
+URL: https://www.aroma-project.org/,
         https://github.com/HenrikBengtsson/aroma.cn
 BugReports: https://github.com/HenrikBengtsson/aroma.cn/issues
 NeedsCompilation: no
-Packaged: 2015-10-27 19:42:18 UTC; hb
+Packaged: 2022-07-20 18:39:28 UTC; hb
 Author: Henrik Bengtsson [aut, cre, cph],
   Pierre Neuvial [aut]
 Maintainer: Henrik Bengtsson <henrikb@braju.com>
 Repository: CRAN
-Date/Publication: 2015-10-28 00:08:16
+Date/Publication: 2022-07-20 19:10:02 UTC

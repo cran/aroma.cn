@@ -1,6 +1,6 @@
-25923b0f6ce4edc8c7e31356c7998573 *DESCRIPTION
+d8034add85ad52722e6887a9d64b7780 *DESCRIPTION
 a0542c2bb6cbd2b120d412589b7a3b6c *NAMESPACE
-121bdd18a664b427829430e82a3dcf04 *NEWS.md
+45dff0451cd738da8eaf749ca26eae8c *NEWS.md
 694f1ab0fbb4bb254cc3b594c0999b7a *R/000.R
 1df04dc13e5ad8dbc137a07bad5a1af1 *R/006.fixVarArgs.R
 07d06fd2bb4a10488375ab942d5f5592 *R/009.setup.R
@@ -14,7 +14,7 @@ b6ea2a71c349ebb08ea1dbdfc1d8d4e4 *R/AbstractCurveNormalization.R
 23aad02bb5a7ff3cd0365210ee1eb3bf *R/CBS.findAtomicAberrations.R
 cea29e3e9f7559cde5e061addf2d0598 *R/CartesianSnpData.R
 f15a8b3ea3e4d31ef14f9d4c19b8788b *R/CopyNumberRegions.findAtomicAberrations.R
-0f6a3411001ae53856c0103776167844 *R/MultiSourceCopyNumberNormalization.R
+e2f137cc24e7a6ed83dcc616c0f56af0 *R/MultiSourceCopyNumberNormalization.R
 574feb4e09da0030758fe730c978194c *R/MultiSourceCopyNumberNormalization.XTRAS.R
 29fcff7adff0cb58868c6d32b26e996a *R/NaiveFracBGenotyping.R
 91acc5ac0c75de182920418c4bf28b22 *R/PairedPSCBS.BOOT.R
@@ -56,7 +56,7 @@ ea5aac0ce98c58c5f5fbaaba6297f776 *R/testAllelicBalanceByBAFs.R
 fcdee93bdc8d66b63dd5b11591d294e8 *R/testEquality.R
 5d70959a9e051a5666c0524ad97022d9 *R/utils.R
 b9dfb7cd7652916d5153f73d884abec4 *R/zzz.R
-044d39105d81890b3867281fa191640e *inst/CITATION
+6daa39a4193f32f259a967ad2dd09c28 *inst/CITATION
 c1c1b071c902ad6ab220f79a3178888c *inst/templates/rsp/PairedPSCBS,deShear,report.tex.rsp
 f01bbc88ade170e0dcb4c76fac17fe7d *inst/templates/rsp/bioinformatics-journals-abbr.bib
 f3907cf5bef1f44c8c15558e94274a18 *inst/templates/rsp/natbib.bst
@@ -105,7 +105,7 @@ c11627802fe64d57a0d320b2fd322529 *inst/testScripts/system/pairedPSCN/R/getTumorN
 2ab2f3dfc2cdfc447ed126a5402c62f0 *inst/testScripts/system/tracks/20091010,TCGA,plot.Rex
 5bdb756f59634b5954e24d663360a32f *inst/testScripts/system/tracks/utils.R
 8c94f300c6ab3e4ee13b6032a5301cb7 *man/AbstractCurveNormalization.Rd
-ac489ec8f54bc2cb76bddc889542af50 *man/MultiSourceCopyNumberNormalization.Rd
+6f96b1239cc7d00b9d473205b84d376b *man/MultiSourceCopyNumberNormalization.Rd
 c05d91010c6630d181fc09b069e0ee87 *man/Non-documented_objects.Rd
 05360f51808b071fc2da462bad97853b *man/PairedPscbsModel.Rd
 d952f2f328170643b9604907469bcadd *man/PrincipalCurveNormalization.Rd
@@ -114,7 +114,7 @@ d952f2f328170643b9604907469bcadd *man/PrincipalCurveNormalization.Rd
 e41a6bcbe83455e13ffe70db3b7cca0f *man/TotalCnSmoothing.Rd
 f65cb43ed875aa1500b4c4ae166336db *man/TumorBoostNormalization.Rd
 a883e2b438327c218edda1b24c9cae61 *man/XYCurveNormalization.Rd
-0abbc3f0351093eea7742489559c9d1a *man/aroma.cn-package.Rd
+4cadaeb6ce277fe16042837c92844b1b *man/aroma.cn-package.Rd
 c099fd26c6e71dc1fca4f8433140ef5c *man/callAllelicBalanceByBAFs.PairedPSCBS.Rd
 5713485b871d7abcf035406d4f832b51 *man/callCopyNeutralRegions.PairedPSCBS.Rd
 93c5264f4800495367f70ca09526d491 *man/callPeaks.PeaksAndValleys.Rd
@@ -122,7 +122,7 @@ c099fd26c6e71dc1fca4f8433140ef5c *man/callAllelicBalanceByBAFs.PairedPSCBS.Rd
 be2469e7fd2ad0f23ac556e3862872e2 *man/cnr.Rd
 84ef9efe4c955fa964c432f027854e94 *man/extractTupleOfDataFiles.MultiSourceCopyNumberNormalization.Rd
 44cebb52dab60af465ab6957e675156a *man/findAtomicAberrations.CopyNumberRegions.Rd
-210f7d31dc6f9f9d7b357941c700b951 *man/fitOne.MultiSourceCopyNumberNormalization.Rd
+88e8e0bf11bfd1649bec085d490a8985 *man/fitOne.MultiSourceCopyNumberNormalization.Rd
 4200854acc17cc519d90fd670612cfa4 *man/getAllNames.MultiSourceCopyNumberNormalization.Rd
 68fb85563fb60b511bee95da8e13ccfb *man/getFitAromaUgpFile.MultiSourceCopyNumberNormalization.Rd
 4e42700e5778314bac38f3efc3a48a0f *man/getInputDataSets.MultiSourceCopyNumberNormalization.Rd
